@@ -1,0 +1,208 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Color tokens (OKLCH). Edit here, never hardcode hex in components ---- */
+:root {
+	--radius: 0.625rem;
+
+	--background: oklch(0.965 0.004 250);
+	--foreground: oklch(0.2 0.02 260);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.2 0.02 260);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.2 0.02 260);
+	--primary: oklch(0.45 0.13 255);
+	--primary-foreground: oklch(0.99 0.002 250);
+	--secondary: oklch(0.955 0.008 255);
+	--secondary-foreground: oklch(0.25 0.03 260);
+	--muted: oklch(0.955 0.005 255);
+	--muted-foreground: oklch(0.46 0.02 260);
+	--accent: oklch(0.94 0.02 255);
+	--accent-foreground: oklch(0.25 0.03 260);
+	--destructive: oklch(0.58 0.21 27);
+	--destructive-foreground: oklch(0.99 0.002 250);
+	--success: oklch(0.5 0.13 150);
+	--border: oklch(0.9 0.008 260);
+	--input: oklch(0.9 0.008 260);
+	--ring: oklch(0.55 0.13 255);
+
+	/* Crash modes — the dataviz reference palette's first three slots,
+	   validated all-pairs against this card surface (worst CVD ΔE 9.2,
+	   normal-vision ΔE 24). Aqua is 2.8:1 on white, so every chart pairs
+	   with a legend and a table view. Order is fixed everywhere:
+	   vehicles only · pedestrian · bicycle. */
+	--mode-veh: #2a78d6;
+	--mode-ped: #eb6834;
+	--mode-bike: #1baf7a;
+	/* Prior years on the year-to-date chart recede; the focus year uses
+	   --primary. */
+	--year-past-1: oklch(0.72 0.01 260);
+	--year-past-2: oklch(0.58 0.01 260);
+	/* Vector basemap (OpenStreetMap geometry): recessive grays so the crash
+	   dots are the only loud thing on the map. */
+	--map-bg: oklch(0.975 0.003 250);
+	--map-park: oklch(0.93 0.035 150);
+	--map-street: oklch(0.88 0.006 260);
+	--map-street-major: oklch(0.8 0.008 260);
+	--map-rail: oklch(0.72 0.01 260);
+	--map-boundary: oklch(0.55 0.02 260);
+	--map-label: oklch(0.45 0.015 260);
+}
+
+.dark {
+	/* Deeper base, clearly elevated cards, brighter borders — so surfaces read
+	   as distinct layers instead of one flat dark wash. */
+	--background: oklch(0.155 0.014 260);
+	--foreground: oklch(0.97 0.006 250);
+	--card: oklch(0.215 0.018 262);
+	--card-foreground: oklch(0.97 0.006 250);
+	--popover: oklch(0.235 0.018 262);
+	--popover-foreground: oklch(0.97 0.006 250);
+	--primary: oklch(0.72 0.14 255);
+	--primary-foreground: oklch(0.16 0.015 260);
+	--secondary: oklch(0.27 0.02 262);
+	--secondary-foreground: oklch(0.97 0.006 250);
+	--muted: oklch(0.25 0.018 262);
+	--muted-foreground: oklch(0.72 0.018 255);
+	--accent: oklch(0.32 0.025 262);
+	--accent-foreground: oklch(0.97 0.006 250);
+	--destructive: oklch(0.7 0.19 25);
+	--destructive-foreground: oklch(0.98 0.002 250);
+	--success: oklch(0.74 0.15 150);
+	--border: oklch(0.32 0.02 262);
+	--input: oklch(0.3 0.02 262);
+	--ring: oklch(0.62 0.14 255);
+
+	/* Same three hues re-stepped for the dark card (all ≥3:1 there;
+	   validated all-pairs: worst CVD ΔE 9.4, normal-vision ΔE 20.9). */
+	--mode-veh: #3987e5;
+	--mode-ped: #d95926;
+	--mode-bike: #199e70;
+	--year-past-1: oklch(0.45 0.01 260);
+	--year-past-2: oklch(0.6 0.01 260);
+	--map-bg: oklch(0.19 0.012 260);
+	--map-park: oklch(0.25 0.03 150);
+	--map-street: oklch(0.29 0.012 260);
+	--map-street-major: oklch(0.37 0.014 260);
+	--map-rail: oklch(0.45 0.012 260);
+	--map-boundary: oklch(0.65 0.02 260);
+	--map-label: oklch(0.72 0.015 255);
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-mode-veh: var(--mode-veh);
+	--color-mode-ped: var(--mode-ped);
+	--color-mode-bike: var(--mode-bike);
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+
+	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+	border-color: var(--color-border);
+}
+
+html {
+	color-scheme: light;
+}
+html.dark {
+	color-scheme: dark;
+}
+
+body {
+	margin: 0;
+	background: var(--color-background);
+	color: var(--color-foreground);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Plotly containers inherit the app font; hover layers must not clip. */
+.js-plotly-plot .plotly {
+	font-family: var(--font-sans);
+}
+
+/* Custom scrollbars in scrolling tables */
+.thin-scroll::-webkit-scrollbar {
+	width: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+	background: var(--color-border);
+	border-radius: 4px;
+}
+
+/* Leaflet chrome reads the same tokens so popups don't look pasted in. */
+.leaflet-container {
+	font-family: var(--font-sans);
+	background: var(--map-bg);
+}
+/* Street names: text ink with a halo in the map background so they stay
+   legible over streets and dots. */
+.street-label {
+	pointer-events: none;
+}
+.street-label span {
+	display: block;
+	transform: translate(-50%, -50%) rotate(var(--angle));
+	white-space: nowrap;
+	font-size: 10px;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: var(--map-label);
+	text-shadow: 0 0 2px var(--map-bg), 0 0 2px var(--map-bg), 0 0 3px
+		var(--map-bg);
+}
+.leaflet-container:not(.show-tier2) .street-label.tier-2 {
+	display: none;
+}
+.leaflet-container .leaflet-popup-content-wrapper,
+.leaflet-container .leaflet-popup-tip {
+	background: var(--color-popover);
+	color: var(--color-popover-foreground);
+	border: 1px solid var(--color-border);
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+.leaflet-container .leaflet-popup-content {
+	margin: 10px 12px;
+	font-size: 0.75rem;
+	line-height: 1.35;
+}
+.leaflet-container a.leaflet-popup-close-button {
+	color: var(--color-muted-foreground);
+}
+.leaflet-container .leaflet-control-zoom a,
+.leaflet-container .leaflet-control-attribution {
+	background: var(--color-card);
+	color: var(--color-foreground);
+	border-color: var(--color-border);
+}
+.leaflet-container .leaflet-control-attribution a {
+	color: var(--color-primary);
+}

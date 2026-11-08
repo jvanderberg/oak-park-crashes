@@ -1,0 +1,33 @@
+{
+"source": "Village of Oak Park — Traffic Crash Dashboard (Power BI)",
+"url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
+"fetchedAt": "2026-11-08T16:20:02.421Z",
+"sourceUpdatedAt": "2026-11-08T13:07:03.860Z",
+"query": "SELECT [Crash Code], [Crash Type], [Crash Mode] FROM [DimCrashType] (model 1737776)",
+"columns": ["Crash Code","Crash Type","Crash Mode"],
+"rows": [
+["1","Pedestrian","Pedestrian"],
+["10","Turning (At Least One Vehicle)","Car"],
+["11","Front To Rear","Car"],
+["12","Sideswipe - Same Direction","Car"],
+["13","Sideswipe - Opposite Direction","Car"],
+["14","Front To Front","Car"],
+["15","Angle","Car"],
+["16","Rear To Side","Car"],
+["17","Rear To Rear","Car"],
+["18","Rear To Front","Car"],
+["19","Deer","Car"],
+["2","Pedalcyclist","Pedalcyclist"],
+["3","Railway Train","Car"],
+["4","Animal","Car"],
+["5","Overturned","Car"],
+["6","Fixed Object","Car"],
+["7","Other Object","Car"],
+["8","Other Non-Collision","Car"],
+["9","Parked Motor Vehicle","Car"],
+["X10","Turning","Car"],
+["X11","Rear End","Car"],
+["X14","Head On","Car"],
+["X3","Railway Trains","Car"]
+]
+}

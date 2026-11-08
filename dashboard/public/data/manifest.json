@@ -1,0 +1,242 @@
+{
+  "generatedAt": "2026-11-08T16:42:29.758Z",
+  "sources": {
+    "village": {
+      "title": "Village of Oak Park — Traffic Crash Dashboard",
+      "url": "https://opendata.oak-park.us/TrafficCrash",
+      "apiUrl": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
+      "description": "Every crash on a public roadway inside the Village reported to the Oak Park Police Department since 1 Jan 2024, from the Power BI model behind the Village dashboard. Posted about a week after each crash.",
+      "sourceUpdatedAt": "2026-11-08T13:07:03.860Z",
+      "fetchedAt": "2026-11-08T16:20:02.352Z",
+      "rows": 4939,
+      "firstDate": "2024-01-01",
+      "lastDate": "2026-10-31"
+    },
+    "idot": {
+      "title": "Illinois Department of Transportation — statewide crash data",
+      "url": "https://www.arcgis.com/home/search.html?q=owner%3AIDOTAdmin%20crashes",
+      "description": "IDOT’s annual crash files (one ArcGIS layer per year), filtered to crashes IDOT locates in Oak Park. Covers every reporting agency, including Illinois State Police on I-290, but only state-reportable crashes: an injury or death, or property damage over $1,500 ($500 if a vehicle is uninsured; 625 ILCS 5/11-407).",
+      "years": [
+        {
+          "year": 2014,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2014_SDMExtract/FeatureServer/0",
+          "layer": "Crashes_2014_SDMExtract",
+          "rows": 1334,
+          "sourceUpdatedAt": "2025-07-17T17:15:04.260Z",
+          "fetchedAt": "2026-11-08T16:18:42.710Z"
+        },
+        {
+          "year": 2015,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2015_SDMExtract/FeatureServer/0",
+          "layer": "Crashes_2015_SDMExtract",
+          "rows": 1481,
+          "sourceUpdatedAt": "2020-05-07T23:06:46.556Z",
+          "fetchedAt": "2026-11-08T16:18:43.428Z"
+        },
+        {
+          "year": 2016,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2016_SDMExtract/FeatureServer/0",
+          "layer": "Crashes_2016_SDMExtract",
+          "rows": 1697,
+          "sourceUpdatedAt": "2025-07-17T17:16:07.485Z",
+          "fetchedAt": "2026-11-08T16:18:44.132Z"
+        },
+        {
+          "year": 2017,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2017_SDMExtract/FeatureServer/0",
+          "layer": "Crashes_2017_SDMExtract",
+          "rows": 1707,
+          "sourceUpdatedAt": "2025-07-17T17:14:15.379Z",
+          "fetchedAt": "2026-11-08T16:18:44.888Z"
+        },
+        {
+          "year": 2018,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2018_SDMExtract/FeatureServer/0",
+          "layer": "Crashes_2018_SDMExtract",
+          "rows": 1548,
+          "sourceUpdatedAt": "2020-05-07T23:06:01.748Z",
+          "fetchedAt": "2026-11-08T16:18:45.686Z"
+        },
+        {
+          "year": 2019,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes2019/FeatureServer/0",
+          "layer": "Crashes2019",
+          "rows": 1552,
+          "sourceUpdatedAt": "2025-07-17T17:12:36.372Z",
+          "fetchedAt": "2026-11-08T16:18:46.458Z"
+        },
+        {
+          "year": 2020,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/Crashes_2020/FeatureServer/0",
+          "layer": "Crashes_2020",
+          "rows": 1127,
+          "sourceUpdatedAt": "2025-07-17T17:11:39.796Z",
+          "fetchedAt": "2026-11-08T16:18:47.374Z"
+        },
+        {
+          "year": 2021,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/CRASHES2021/FeatureServer/0",
+          "layer": "CRASHES2021",
+          "rows": 1228,
+          "sourceUpdatedAt": "2025-07-17T17:17:12.667Z",
+          "fetchedAt": "2026-11-08T16:18:48.061Z"
+        },
+        {
+          "year": 2022,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/CRASHES_2022/FeatureServer/0",
+          "layer": "CRASHES_2022",
+          "rows": 1216,
+          "sourceUpdatedAt": "2025-07-17T17:19:45.518Z",
+          "fetchedAt": "2026-11-08T16:18:48.766Z"
+        },
+        {
+          "year": 2023,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/CRASHES_2023/FeatureServer/0",
+          "layer": "CRASHES_2023",
+          "rows": 1416,
+          "sourceUpdatedAt": "2026-07-15T21:29:06.044Z",
+          "fetchedAt": "2026-11-08T16:18:49.735Z"
+        },
+        {
+          "year": 2024,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/CRASHES__2024/FeatureServer/0",
+          "layer": "CRASHES__2024",
+          "rows": 1423,
+          "sourceUpdatedAt": "2026-07-09T19:01:49.751Z",
+          "fetchedAt": "2026-11-08T16:18:50.391Z"
+        },
+        {
+          "year": 2025,
+          "url": "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/CRASHES___2025/FeatureServer/0",
+          "layer": "CRASHES___2025",
+          "rows": 1369,
+          "sourceUpdatedAt": "2026-07-22T14:33:49.382Z",
+          "fetchedAt": "2026-11-08T16:18:52.061Z"
+        }
+      ]
+    },
+    "osm": {
+      "title": "OpenStreetMap — basemap streets, rail, parks and boundary",
+      "url": "https://www.openstreetmap.org/copyright",
+      "description": "Street, rail, park and Village-boundary geometry from OpenStreetMap (via the Overpass API), baked into a static file. © OpenStreetMap contributors, available under the Open Database License.",
+      "osmBase": "2026-11-08T16:40:15Z",
+      "fetchedAt": "2026-11-08T16:42:11.969Z"
+    }
+  },
+  "method": "Raw tables are fetched verbatim (data/raw/), then decoded and normalized by extract/build.ts. Village crash counts are re-derived from the raw rows and checked against the Village dashboard’s own published totals for every year and severity; the build fails on any mismatch. Weather, lighting, road-surface and traffic-control codes are decoded with tables derived from IDOT’s own rows, which publish each code beside its label. A crash’s severity is its most severe injury on the KABCO scale (K fatal, A incapacitating, B non-incapacitating, C possible injury, O none). “KSI” means killed or seriously injured (K + A).",
+  "checks": [
+    {
+      "year": 2024,
+      "severity": "Fatal",
+      "published": 1,
+      "derived": 1
+    },
+    {
+      "year": 2024,
+      "severity": "Injury",
+      "published": 246,
+      "derived": 246
+    },
+    {
+      "year": 2024,
+      "severity": "Property Damage",
+      "published": 1477,
+      "derived": 1477
+    },
+    {
+      "year": 2025,
+      "severity": "Injury",
+      "published": 215,
+      "derived": 215
+    },
+    {
+      "year": 2025,
+      "severity": "Property Damage",
+      "published": 1501,
+      "derived": 1501
+    },
+    {
+      "year": 2026,
+      "severity": "Fatal",
+      "published": 1,
+      "derived": 1
+    },
+    {
+      "year": 2026,
+      "severity": "Injury",
+      "published": 234,
+      "derived": 234
+    },
+    {
+      "year": 2026,
+      "severity": "Property Damage",
+      "published": 1264,
+      "derived": 1264
+    }
+  ],
+  "crossSource": {
+    "2024": {
+      "idotCity": 995,
+      "matched": 946,
+      "village": 1724
+    },
+    "2025": {
+      "idotCity": 966,
+      "matched": 919,
+      "village": 1716
+    }
+  },
+  "known_issues": [
+    "The two sources count different things and are never added together. Village data: every Oak Park PD report since 2024, including minor crashes, but not crashes worked by the State Police on I-290. IDOT data: all agencies including I-290, but only crashes above IDOT’s reporting threshold, and finalized months after year-end.",
+    "Counts are crashes, not people: a crash that injured three people counts once in crash totals. People-injured totals (K/A/B/C counts) are shown separately where labelled.",
+    "“Pedestrian” and “bicycle” crashes are classified by the crash’s first harmful event (IDOT “Type of First Crash”). A crash that began as a collision between vehicles and then struck a pedestrian is counted as a vehicle crash.",
+    "17 of 4939 Village crashes have no usable coordinates and are left off the map (they still count in every total).",
+    "156 of 17098 IDOT crashes have no usable coordinates.",
+    "IDOT’s 2014–2017 files record longitude without its minus sign (6165 crashes); the sign is restored here.",
+    "2 separate Village crashes (different times and places) share a police report number. They are counted as separate crashes, as the Village dashboard also does.",
+    "1 IDOT row(s) are misaligned in IDOT’s own file (fields shifted by a stray comma); their severity is shown as “Unknown”.",
+    "IDOT leaves the investigating agency blank for: 2025 (1369 crashes). Interstate crashes are identified by road class (IDOT functional class “InterState”), which is populated for every year.",
+    "The newest IDOT year may still be preliminary; IDOT revises recent files as late reports arrive.",
+    "The Village posts crashes about a week after they occur, so the most recent days are incomplete."
+  ],
+  "codebook": [
+    {
+      "field": "weather",
+      "codeField": "WeatherCode",
+      "labelField": "WeatherCond",
+      "codes": 11,
+      "ambiguous": 0
+    },
+    {
+      "field": "light",
+      "codeField": "LightConditionCode",
+      "labelField": "LightingCond",
+      "codes": 6,
+      "ambiguous": 0
+    },
+    {
+      "field": "control",
+      "codeField": "TrafficControlDeviceCode",
+      "labelField": "TrafficControlDevice",
+      "codes": 17,
+      "ambiguous": 0
+    },
+    {
+      "field": "surface",
+      "codeField": "RoadSurfaceConditionCode",
+      "labelField": "RoadSurfaceCond",
+      "codes": 7,
+      "ambiguous": 0
+    },
+    {
+      "field": "cause",
+      "codeField": "Cause1Code",
+      "labelField": "Cause1",
+      "codes": 38,
+      "ambiguous": 1
+    }
+  ],
+  "undocumentedCodes": {
+    "control: Code 16 (undocumented)": 4
+  }
+}

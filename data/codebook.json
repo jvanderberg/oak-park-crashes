@@ -1,0 +1,109 @@
+{
+  "note": "Derived from IDOT statewide crash layers (2024–2025 rows), which publish each SR 1050 code beside its label. See extract/codebook.ts.",
+  "weather": {
+    "1": "Clear",
+    "2": "Rain",
+    "3": "Snow",
+    "4": "Fog/Smoke/Haze",
+    "5": "Sleet/Hail",
+    "6": "Severe Cross Wind",
+    "7": "Other",
+    "8": "Cloudy/Overcast",
+    "9": "Unknown",
+    "10": "Freezing Rain or Freezing Drizzle",
+    "11": "Blowing Snow"
+  },
+  "light": {
+    "1": "Daylight",
+    "2": "Dawn",
+    "3": "Dusk",
+    "4": "Darkness",
+    "5": "Darkness / Lighted Road",
+    "9": "Unknown"
+  },
+  "control": {
+    "1": "No Controls",
+    "2": "Stop Sign",
+    "3": "Traffic Signal",
+    "4": "Yield",
+    "5": "Police/Flagman",
+    "6": "RR Crossing Gate",
+    "7": "Other RR Crossing",
+    "8": "School Zone",
+    "9": "No Passing",
+    "10": "Other Regualtory Sig",
+    "11": "Other Warning Sign",
+    "12": "Lane Use Marking",
+    "13": "Other",
+    "14": "Delineators",
+    "15": "Flashing Control Signal",
+    "17": "Pedestrian Crossing Sign",
+    "99": "Unknown"
+  },
+  "surface": {
+    "1": "Dry",
+    "2": "Wet",
+    "3": "Snow or Slush",
+    "4": "Ice",
+    "5": "Sand / Mud / Dirt",
+    "6": "Other",
+    "9": "Unknown"
+  },
+  "cause": {
+    "1": "Exceeding Authorized Speed Limit",
+    "2": "Failing to Yield Right of Way",
+    "3": "Following Too Closely",
+    "4": "Improper Overtaking/Passing",
+    "5": "Driving On Wrong Side/Wrong Way",
+    "6": "Improper Turning/No Signal",
+    "7": "Turning Right On Red",
+    "8": "Under Influence of Alcohol/Drugs",
+    "10": "Equipment-Vehicle Condition",
+    "11": "Weather",
+    "12": "Road Engineering/Surface/Marking Defects",
+    "13": "Road Construction/Maintenance",
+    "14": "Vision Obscured",
+    "15": "Driving Skills/Knowledge/Experience",
+    "17": "Physical Condition of Driver",
+    "18": "Unable to Determine",
+    "19": "Had Been Drinking",
+    "20": "Improper Lane Usage",
+    "21": "Animal",
+    "22": "Disregarding Yield Sign",
+    "23": "Disregarding Stop Sign",
+    "24": "Disregarding Other Traffic Signs",
+    "25": "Disregarding Traffic Signals",
+    "26": "Disregarding Road Markings",
+    "27": "Exceeding Safe Speed For Conditions",
+    "28": "Failing to Reduce Speed to Avoid Crash",
+    "29": "Passing Stopped School Bus",
+    "30": "Improper Backing",
+    "32": "Evasive Action Due to Animal / Object / Non-Motorist",
+    "40": "Distraction - From Outside Vehicle",
+    "41": "Distraction - From Inside Vehicle",
+    "43": "Distraction Other Electronic Device (Navigation Device / DVD Player / etc.)",
+    "44": "Texting",
+    "45": "Cell Phone Use Other Than Texting",
+    "50": "Operating Vehicle In Reckless Manner",
+    "60": "Motorcycle Advancing Legally On Red Light",
+    "75": "(UNK)",
+    "99": "(N/A)"
+  },
+  "ambiguities": [
+    {
+      "field": "cause",
+      "codeField": "Cause1Code",
+      "labelField": "Cause1",
+      "codes": 38,
+      "ambiguous": [
+        {
+          "code": "43",
+          "labels": {
+            "Distraction – Other Electronic Device (Navigation Device / DVD Player / etc.)": 1,
+            "Distraction Other Electronic Device (Navigation Device / DVD Player / etc.)": 3
+          }
+        }
+      ]
+    }
+  ]
+}
