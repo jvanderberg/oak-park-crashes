@@ -167,6 +167,11 @@ function buildCodebooks(idotRows: Array<Record<string, Cell>>): Codebooks {
 		// a few Village reports; fill them from the full 2014– history.
 		const older = deriveCodebook(idotRows, codeField, labelField, name)
 		const merged = { ...older.book, ...book }
+		// IDOT labels "not applicable" as a bare "(N/A)"; spell it out so it
+		// reads as a category in tables (both sources use this label).
+		for (const [code, label] of Object.entries(merged)) {
+			if (label === '(N/A)') merged[code] = 'Not Applicable'
+		}
 		assert(report.codes >= 5, `codebook ${name} has only ${report.codes} codes`)
 		out[name] = merged
 		out.reports.push({

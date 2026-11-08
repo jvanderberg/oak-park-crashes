@@ -3,7 +3,7 @@
 // tested directly.
 
 import type { Crash, Measure, Mode, ModeFilter, VillageCrash } from './types'
-import { MODES } from './types'
+import { MODES, modesOf } from './types'
 
 export const isInjury = (c: Crash) =>
 	c.sev === 'K' || c.sev === 'A' || c.sev === 'B' || c.sev === 'C'
@@ -31,7 +31,9 @@ export function total(crashes: Crash[], measure: Measure): number {
 }
 
 export function byMode<T extends Crash>(crashes: T[], mode: ModeFilter): T[] {
-	return mode === 'all' ? crashes : crashes.filter((c) => c.mode === mode)
+	if (mode === 'all') return crashes
+	const modes = modesOf(mode)
+	return crashes.filter((c) => modes.includes(c.mode))
 }
 
 // ---- Periods ---------------------------------------------------------------
@@ -248,11 +250,16 @@ export function rank<T extends Crash>(
 			ped: 0,
 			bike: 0,
 		}
-		r.value += weight(c, measure)
+		const w = weight(c, measure)
+		r.value += w
 		r.crashes += 1
-		if (isKsi(c)) r.ksi += 1
-		if (c.mode === 'ped') r.ped += 1
-		if (c.mode === 'bike') r.bike += 1
+		// The breakdown columns count the same crashes as the value column
+		// (e.g. ped/bike *injury* crashes when counting injury crashes).
+		if (w > 0) {
+			if (isKsi(c)) r.ksi += 1
+			if (c.mode === 'ped') r.ped += 1
+			if (c.mode === 'bike') r.bike += 1
+		}
 		acc.set(key, r)
 	}
 	return [...acc.values()]

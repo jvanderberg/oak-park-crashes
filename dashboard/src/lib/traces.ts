@@ -4,10 +4,10 @@
 
 import type { Data } from 'plotly.js'
 import type { ChartTheme } from './colors'
-import { MODES, MODE_LABEL, type Mode, type ModeFilter } from './types'
+import { MODE_LABEL, type Mode, type ModeFilter, modesOf } from './types'
 
 export function visibleModes(filter: ModeFilter): Mode[] {
-	return filter === 'all' ? [...MODES] : [filter]
+	return modesOf(filter)
 }
 
 export function stackedBars(

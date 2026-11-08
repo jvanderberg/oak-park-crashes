@@ -4,10 +4,13 @@ import { useStore } from '@/lib/store'
 import {
 	MEASURE_LABEL,
 	MEASURE_SHORT,
-	MODE_LABEL,
+	MODE_FILTERS,
+	MODE_FILTER_LABEL,
+	MODE_FILTER_SHORT,
 	type Measure,
 	type ModeFilter,
 } from '@/lib/types'
+import { useNarrow } from '@/lib/useNarrow'
 import { useVillageView } from '@/lib/view'
 import type { ReactNode } from 'react'
 
@@ -24,6 +27,9 @@ export function Controls({
 	const setMode = useStore((s) => s.setMode)
 	const measure = useStore((s) => s.measure)
 	const setMeasure = useStore((s) => s.setMeasure)
+	// The full-screen bar wraps instead of scrolling; on phones the five
+	// Who options only fit on one row with short labels.
+	const shortWho = useNarrow() && variant === 'map'
 
 	if (!view) return <div className="h-9" />
 	const latest = view.years.at(-1)
@@ -54,12 +60,10 @@ export function Controls({
 					ariaLabel="Crash mode"
 					value={mode}
 					onChange={setMode}
-					options={[
-						{ value: 'all', label: 'Everyone' },
-						{ value: 'veh', label: MODE_LABEL.veh },
-						{ value: 'ped', label: MODE_LABEL.ped },
-						{ value: 'bike', label: MODE_LABEL.bike },
-					]}
+					options={MODE_FILTERS.map((m) => ({
+						value: m,
+						label: shortWho ? MODE_FILTER_SHORT[m] : MODE_FILTER_LABEL[m],
+					}))}
 				/>
 			</Labeled>
 			<Labeled label="Count" compact={variant === 'map'}>

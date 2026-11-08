@@ -3,7 +3,7 @@ import { type Comparison, compare } from '@/lib/crashes'
 import { describeFilters } from '@/lib/filters'
 import { fmtInt, fmtPct } from '@/lib/format'
 import { useStore } from '@/lib/store'
-import { MODE_LABEL, type Measure } from '@/lib/types'
+import { MODE_FILTER_LABEL, type Measure } from '@/lib/types'
 import { periodSpan, useVillageView } from '@/lib/view'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { useMemo } from 'react'
@@ -58,7 +58,7 @@ export function Kpis() {
 
 	const span = periodSpan(view.period, view.lastDate)
 	const who = [
-		mode === 'all' ? null : `${MODE_LABEL[mode].toLowerCase()} crashes`,
+		mode === 'all' ? null : `${MODE_FILTER_LABEL[mode].toLowerCase()} crashes`,
 		...describeFilters(filters).map((a) => a.label),
 	]
 		.filter(Boolean)

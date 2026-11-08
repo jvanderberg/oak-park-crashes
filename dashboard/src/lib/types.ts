@@ -126,7 +126,41 @@ export const MEASURE_SHORT: Record<Measure, string> = {
 	people: 'People hurt',
 }
 
-export type ModeFilter = 'all' | Mode
+/** The "Who" filter: one mode, everyone, or pedestrians and cyclists
+ * together. */
+export type ModeFilter = 'all' | Mode | 'pedbike'
+
+export const MODE_FILTERS: readonly ModeFilter[] = [
+	'all',
+	'veh',
+	'ped',
+	'bike',
+	'pedbike',
+]
+
+export const MODE_FILTER_LABEL: Record<ModeFilter, string> = {
+	all: 'Everyone',
+	veh: 'Vehicles only',
+	ped: 'Pedestrian',
+	bike: 'Bicycle',
+	pedbike: 'Ped + bike',
+}
+
+/** Shorter labels for the full-screen map's bar on phones. */
+export const MODE_FILTER_SHORT: Record<ModeFilter, string> = {
+	all: 'Everyone',
+	veh: 'Vehicles',
+	ped: 'Ped',
+	bike: 'Bike',
+	pedbike: 'Ped + bike',
+}
+
+/** The modes a Who choice includes. */
+export function modesOf(filter: ModeFilter): Mode[] {
+	if (filter === 'all') return [...MODES]
+	if (filter === 'pedbike') return ['ped', 'bike']
+	return [filter]
+}
 
 type LonLat = [number, number]
 

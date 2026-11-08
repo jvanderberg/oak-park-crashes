@@ -4,7 +4,7 @@
 // can be unit-tested without a DOM.
 
 import { type CrashFilters, DAY_KINDS, DEFAULT_FILTERS, TIMES } from './filters'
-import type { Measure, ModeFilter } from './types'
+import { MODE_FILTERS, type Measure, type ModeFilter } from './types'
 
 export type Theme = 'light' | 'dark'
 /** Long-view filter: include or exclude crashes on I-290 (and its ramps). */
@@ -37,7 +37,6 @@ export const DEFAULT_URL_STATE: UrlState = {
 }
 
 const MEASURES: readonly Measure[] = ['crashes', 'injury', 'ksi', 'people']
-const MODE_FILTERS: readonly ModeFilter[] = ['all', 'veh', 'ped', 'bike']
 
 function oneOf<T extends string>(
 	v: string | null,

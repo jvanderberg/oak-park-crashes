@@ -1,4 +1,5 @@
 import {
+	byMode,
 	calendarDoy,
 	compare,
 	cumulativeByDay,
@@ -71,6 +72,19 @@ describe('measures', () => {
 		expect(total(cs, 'ksi')).toBe(2)
 		// C=1, A=1, K crash with one fatality + two B injuries = 3
 		expect(total(cs, 'people')).toBe(5)
+	})
+})
+
+describe('who filter', () => {
+	it('"Ped + bike" keeps pedestrian and bicycle crashes together', () => {
+		const cs = [
+			crash('2026-01-01', 'B', 'veh'),
+			crash('2026-01-02', 'B', 'ped'),
+			crash('2026-01-03', 'B', 'bike'),
+		]
+		expect(byMode(cs, 'pedbike').map((c) => c.mode)).toEqual(['ped', 'bike'])
+		expect(byMode(cs, 'ped').map((c) => c.mode)).toEqual(['ped'])
+		expect(byMode(cs, 'all')).toHaveLength(3)
 	})
 })
 
@@ -181,5 +195,18 @@ describe('rankings', () => {
 		const r = rank([a, b], locationKey, 'injury')
 		expect(r).toHaveLength(1)
 		expect(r[0]?.value).toBe(2)
+	})
+	it('breakdown columns count only the crashes being ranked', () => {
+		const at = { street: 'Lake St', cross: null }
+		const r = rank(
+			[
+				crash('2025-01-01', 'B', 'ped', at),
+				crash('2025-01-02', 'O', 'ped', at), // no injury: not ranked
+				crash('2025-01-03', 'A', 'bike', at),
+			],
+			locationKey,
+			'injury',
+		)
+		expect(r[0]).toMatchObject({ value: 2, ped: 1, bike: 1, ksi: 1 })
 	})
 })

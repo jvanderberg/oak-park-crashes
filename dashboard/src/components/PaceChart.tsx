@@ -4,7 +4,7 @@ import { baseLayout, resolveChartTheme } from '@/lib/colors'
 import { calendarDoy, cumulativeByDay } from '@/lib/crashes'
 import { fmtInt, fmtMonthDay } from '@/lib/format'
 import { useStore } from '@/lib/store'
-import { MEASURE_LABEL, MODE_LABEL } from '@/lib/types'
+import { MEASURE_LABEL, MODE_FILTER_LABEL } from '@/lib/types'
 import { useNarrow } from '@/lib/useNarrow'
 import { useVillageView } from '@/lib/view'
 import type { Data, Layout } from 'plotly.js'
@@ -173,7 +173,7 @@ export function PaceChart() {
 	const lastYear = lines.at(-1)
 	const prev = lines.find((l) => l.year === (lastYear?.year ?? 0) - 1)
 	const who =
-		mode === 'all' ? '' : ` · ${MODE_LABEL[mode].toLowerCase()} crashes`
+		mode === 'all' ? '' : ` · ${MODE_FILTER_LABEL[mode].toLowerCase()} crashes`
 
 	return (
 		<ChartCard

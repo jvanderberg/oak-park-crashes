@@ -44,6 +44,12 @@ describe('url state', () => {
 		}
 		expect(parseUrl(`?${serializeUrl(s, 'light')}`)).toEqual(s)
 	})
+	it('accepts the ped + bike who filter', () => {
+		expect(parseUrl('?mode=pedbike').mode).toBe('pedbike')
+		expect(serializeUrl({ ...DEFAULT_URL_STATE, mode: 'pedbike' })).toBe(
+			'mode=pedbike',
+		)
+	})
 	it('drops junk map filters', () => {
 		const s = parseUrl(
 			`?map=yes&tod=lunch&days=sunday&hr=yes&street=${'x'.repeat(81)}`,

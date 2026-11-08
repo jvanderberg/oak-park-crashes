@@ -5,16 +5,18 @@ import { fmtInt } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import {
 	MEASURE_SHORT,
-	MODES,
+	MODE_FILTER_LABEL,
 	MODE_LABEL,
 	type Measure,
 	type Mode,
+	modesOf,
 } from '@/lib/types'
 import type { VillageView } from '@/lib/view'
 import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { useId, useState } from 'react'
 
-/** Mode swatches + dot-size key, shared by the card and the pop-out. */
+/** Swatches for the modes on the map + dot-size key, shared by the card
+ * and the pop-out. */
 export function MapLegend({
 	swatches,
 	measure,
@@ -22,10 +24,11 @@ export function MapLegend({
 	swatches: Record<Mode, string>
 	measure: Measure
 }) {
+	const modes = modesOf(useStore((s) => s.mode))
 	return (
 		<div className="flex flex-wrap items-center gap-x-6 gap-y-1">
 			<Legend
-				items={MODES.map((m) => ({
+				items={modes.map((m) => ({
 					key: m,
 					label: MODE_LABEL[m],
 					swatch: swatches[m],
@@ -59,7 +62,7 @@ export function AppliedFilters({ view }: { view: VillageView }) {
 		view.year === latest && view.period.partial
 			? `${view.year} to date`
 			: String(view.year),
-		mode === 'all' ? 'Everyone' : MODE_LABEL[mode],
+		MODE_FILTER_LABEL[mode],
 		MEASURE_SHORT[measure],
 		...describeFilters(f).map((a) => a.label),
 	]
