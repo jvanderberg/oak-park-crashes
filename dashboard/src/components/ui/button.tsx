@@ -33,6 +33,8 @@ export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
 		VariantProps<typeof buttonVariants> {
 	asChild?: boolean
+	/** React 19 passes `ref` through as a plain prop. */
+	ref?: React.Ref<HTMLButtonElement>
 }
 
 export function Button({

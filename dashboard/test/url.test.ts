@@ -33,7 +33,23 @@ describe('url state', () => {
 			interstate: 'incl',
 			crash: '31337',
 			theme: 'dark',
+			mapFull: true,
+			mapFilters: {
+				show: 'ksi',
+				time: 'evening',
+				days: 'weekend',
+				street: 'Madison St',
+				cause: 'Failing To Yield Right-Of-Way',
+				hitRun: true,
+			},
 		}
 		expect(parseUrl(`?${serializeUrl(s, 'light')}`)).toEqual(s)
+	})
+	it('drops junk map filters', () => {
+		const s = parseUrl(
+			`?map=yes&tod=lunch&days=sunday&hr=yes&street=${'x'.repeat(81)}`,
+		)
+		expect(s.mapFull).toBe(false)
+		expect(s.mapFilters).toEqual(DEFAULT_URL_STATE.mapFilters)
 	})
 })

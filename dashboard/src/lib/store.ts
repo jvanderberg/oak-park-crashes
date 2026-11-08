@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { decodeIdot, decodeVillage } from './data'
+import { DEFAULT_MAP_FILTERS, type MapFilters } from './mapFilters'
 import type {
 	Basemap,
 	CompactTable,
@@ -9,7 +10,14 @@ import type {
 	ModeFilter,
 	VillageCrash,
 } from './types'
-import { type Interstate, type Theme, readUrl } from './url'
+import {
+	type Interstate,
+	type Theme,
+	type UrlState,
+	pushUrl,
+	readUrl,
+	writeUrl,
+} from './url'
 
 export type Status = 'loading' | 'ready' | 'error'
 
@@ -48,6 +56,8 @@ interface AppState {
 	interstate: Interstate
 	crash: string | null
 	theme: Theme
+	mapFull: boolean
+	mapFilters: MapFilters
 
 	load: () => Promise<void>
 	setYear: (y: number | null) => void
@@ -56,12 +66,32 @@ interface AppState {
 	setInterstate: (i: Interstate) => void
 	setCrash: (id: string | null) => void
 	toggleTheme: () => void
+	setMapFilters: (patch: Partial<MapFilters>) => void
+	resetMapFilters: () => void
+	openMapFull: () => void
+	closeMapFull: () => void
+	/** Browser Back/Forward: adopt the entry's pop-out state, then rewrite
+	 * the URL so it matches the filters still in effect. */
+	onPopState: () => void
+}
+
+export function urlStateOf(s: AppState): UrlState {
+	return {
+		year: s.year,
+		mode: s.mode,
+		measure: s.measure,
+		interstate: s.interstate,
+		crash: s.crash,
+		theme: s.theme,
+		mapFull: s.mapFull,
+		mapFilters: s.mapFilters,
+	}
 }
 
 const initial = readUrl()
 applyThemeClass(initial.theme ?? SYSTEM_THEME)
 
-export const useStore = create<AppState>((set) => ({
+export const useStore = create<AppState>((set, get) => ({
 	status: 'loading',
 	error: null,
 	village: null,
@@ -75,6 +105,8 @@ export const useStore = create<AppState>((set) => ({
 	interstate: initial.interstate,
 	crash: initial.crash,
 	theme: initial.theme ?? SYSTEM_THEME,
+	mapFull: initial.mapFull,
+	mapFilters: initial.mapFilters,
 
 	async load() {
 		set({ status: 'loading', error: null })
@@ -116,6 +148,32 @@ export const useStore = create<AppState>((set) => ({
 			applyThemeClass(theme)
 			return { theme }
 		}),
+	setMapFilters: (patch) =>
+		set((s) => ({ mapFilters: { ...s.mapFilters, ...patch } })),
+	// "Show" is the map's headline choice, not a narrowing filter: keep it.
+	resetMapFilters: () =>
+		set((s) => ({
+			mapFilters: { ...DEFAULT_MAP_FILTERS, show: s.mapFilters.show },
+		})),
+	openMapFull: () => {
+		if (get().mapFull) return
+		set({ mapFull: true })
+		pushUrl(urlStateOf(get()), SYSTEM_THEME)
+	},
+	closeMapFull: () => {
+		if (!get().mapFull) return
+		// Opened in this tab: step back off the entry we pushed. Opened from
+		// a shared full-screen link: there is nothing to go back to.
+		if ((history.state as { mapFull?: boolean } | null)?.mapFull) {
+			history.back()
+		} else {
+			set({ mapFull: false })
+		}
+	},
+	onPopState: () => {
+		set({ mapFull: readUrl().mapFull })
+		writeUrl(urlStateOf(get()), SYSTEM_THEME)
+	},
 }))
 
 async function fetchJson<T>(url: string): Promise<T> {

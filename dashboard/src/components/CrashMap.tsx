@@ -1,19 +1,30 @@
-import { ChartCard, Legend } from '@/components/ChartCard'
+import { ChartCard } from '@/components/ChartCard'
+import { Controls } from '@/components/Controls'
+import { MapFilterPod, MapLegend } from '@/components/MapFilterPod'
+import { ToggleGroup } from '@/components/ToggleGroup'
+import { Button } from '@/components/ui/button'
 import { resolveChartTheme } from '@/lib/colors'
-import { isInjury, isKsi, peopleHurt } from '@/lib/crashes'
 import { fmtDate, fmtHour, fmtInt } from '@/lib/format'
+import {
+	type MapShow,
+	SHOW_NOUN,
+	SHOW_OPTIONS,
+	describeMapFilters,
+	passesMapFilters,
+	tally,
+} from '@/lib/mapFilters'
 import { useStore } from '@/lib/store'
 import {
-	MEASURE_LABEL,
 	MODE_LABEL,
-	type Measure,
 	SEVERITY_LABEL,
 	type Severity,
 	type VillageCrash,
 } from '@/lib/types'
+import { useNarrow } from '@/lib/useNarrow'
 import { periodSpan, useVillageView } from '@/lib/view'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { ArrowLeft, Maximize2 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const OAK_PARK_BOUNDS: L.LatLngBoundsExpression = [
@@ -29,19 +40,6 @@ const DRAW_ORDER: Record<Severity, number> = {
 	B: 2,
 	A: 3,
 	K: 4,
-}
-
-function passes(c: VillageCrash, measure: Measure): boolean {
-	switch (measure) {
-		case 'crashes':
-			return true
-		case 'injury':
-			return isInjury(c)
-		case 'ksi':
-			return isKsi(c)
-		case 'people':
-			return peopleHurt(c) > 0
-	}
 }
 
 const ESC: Record<string, string> = {
@@ -90,12 +88,20 @@ export function CrashMap() {
 	const view = useVillageView()
 	const village = useStore((s) => s.village)
 	const basemap = useStore((s) => s.basemap)
-	const measure = useStore((s) => s.measure)
 	const theme = useStore((s) => s.theme)
 	const crashId = useStore((s) => s.crash)
 	const setCrash = useStore((s) => s.setCrash)
+	const mapFull = useStore((s) => s.mapFull)
+	const mapFilters = useStore((s) => s.mapFilters)
+	const openMapFull = useStore((s) => s.openMapFull)
+	const closeMapFull = useStore((s) => s.closeMapFull)
+	const resetMapFilters = useStore((s) => s.resetMapFilters)
+	const setMapFilters = useStore((s) => s.setMapFilters)
+	const narrow = useNarrow()
 
 	const el = useRef<HTMLDivElement | null>(null)
+	const expandBtn = useRef<HTMLButtonElement | null>(null)
+	const backBtn = useRef<HTMLButtonElement | null>(null)
 	const map = useRef<L.Map | null>(null)
 	const base = useRef<L.LayerGroup | null>(null)
 	const layer = useRef<L.LayerGroup | null>(null)
@@ -106,12 +112,39 @@ export function CrashMap() {
 	// renders its skeleton), so map creation keys off this.
 	const hasView = view !== null
 
-	const points = useMemo(() => {
-		if (!view) return []
-		return view.crashes
-			.filter((c) => c.lat !== null && c.lon !== null && passes(c, measure))
-			.sort((a, b) => DRAW_ORDER[a.sev] - DRAW_ORDER[b.sev])
-	}, [view, measure])
+	// Crashes under the page's year and who filters, then the map's own.
+	const pageCrashes = view?.crashes
+	const shown = useMemo(
+		() => (pageCrashes ?? []).filter((c) => passesMapFilters(c, mapFilters)),
+		[pageCrashes, mapFilters],
+	)
+	const points = useMemo(
+		() =>
+			shown
+				.filter((c) => c.lat !== null && c.lon !== null)
+				.sort((a, b) => DRAW_ORDER[a.sev] - DRAW_ORDER[b.sev]),
+		[shown],
+	)
+	// Dropdown counts honor every other filter, so "Madison St (41)" means
+	// picking it shows 41 dots.
+	const streets = useMemo(
+		() =>
+			tally(
+				(pageCrashes ?? [])
+					.filter((c) => passesMapFilters(c, mapFilters, 'street'))
+					.flatMap((c) => (c.cross ? [c.street, c.cross] : [c.street])),
+			),
+		[pageCrashes, mapFilters],
+	)
+	const causes = useMemo(
+		() =>
+			tally(
+				(pageCrashes ?? [])
+					.filter((c) => passesMapFilters(c, mapFilters, 'cause'))
+					.map((c) => c.cause1),
+			),
+		[pageCrashes, mapFilters],
+	)
 
 	const selected = useMemo(
 		() =>
@@ -127,6 +160,7 @@ export function CrashMap() {
 		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 		const m = L.map(el.current, {
 			preferCanvas: true,
+			zoomControl: false,
 			zoomSnap: 0.25,
 			scrollWheelZoom: false,
 			zoomAnimation: !reduce,
@@ -134,6 +168,7 @@ export function CrashMap() {
 			markerZoomAnimation: !reduce,
 		})
 		m.fitBounds(OAK_PARK_BOUNDS)
+		L.control.zoom({ position: 'topright' }).addTo(m)
 		// Panes: basemap under the crash dots, street names above them,
 		// the permalink ring on top.
 		m.createPane('basemap').style.zIndex = '250'
@@ -285,6 +320,50 @@ export function CrashMap() {
 		}
 	}, [selected, theme, mapReady])
 
+	// Pop-out: resize the map to its new box, let the wheel zoom (it can't
+	// hijack page scrolling when the map is the whole page), and re-frame
+	// the Village unless a crash permalink is driving the view.
+	useEffect(() => {
+		const m = map.current
+		if (!mapReady || !m) return
+		m.invalidateSize()
+		if (mapFull) m.scrollWheelZoom.enable()
+		else m.scrollWheelZoom.disable()
+		if (!useStore.getState().crash) {
+			m.fitBounds(OAK_PARK_BOUNDS, {
+				paddingTopLeft: mapFull && !narrow ? [360, 0] : [0, 0],
+				paddingBottomRight: mapFull && narrow ? [0, 60] : [0, 0],
+				animate: false,
+			})
+		}
+	}, [mapFull, mapReady, narrow])
+
+	// While popped out: lock page scroll, Esc closes (an open popup first),
+	// focus moves to the back button and returns to the expand button.
+	useEffect(() => {
+		if (!mapFull) return
+		const root = document.documentElement
+		const prev = root.style.overflow
+		root.style.overflow = 'hidden'
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key !== 'Escape') return
+			const m = map.current
+			if (m && el.current?.querySelector('.leaflet-popup')) {
+				m.closePopup()
+				return
+			}
+			closeMapFull()
+		}
+		addEventListener('keydown', onKey)
+		backBtn.current?.focus({ preventScroll: true })
+		const expand = expandBtn.current
+		return () => {
+			root.style.overflow = prev
+			removeEventListener('keydown', onKey)
+			expand?.focus({ preventScroll: true })
+		}
+	}, [mapFull, closeMapFull])
+
 	if (!view)
 		return (
 			<ChartCard title="Where crashes happen" loading>
@@ -293,56 +372,110 @@ export function CrashMap() {
 		)
 	const t = resolveChartTheme()
 	const span = periodSpan(view.period, view.lastDate)
-	const unplaced = view.crashes.filter(
-		(c) => (c.lat === null || c.lon === null) && passes(c, measure),
-	).length
+	const unplaced = shown.length - points.length
+	const active = describeMapFilters(mapFilters)
+	const countLabel = SHOW_NOUN[mapFilters.show]
+	const title = `Where ${countLabel} happened`
+	const spanText = `${span}${view.period.partial ? `, ${view.year}` : ''}`
 
 	return (
 		<ChartCard
 			id="map"
-			title="Where crashes happen"
-			subtitle={`${fmtInt(points.length)} ${MEASURE_LABEL[measure === 'people' ? 'injury' : measure].toLowerCase()}, ${span}${view.period.partial ? `, ${view.year}` : ''} · click a dot for details`}
-			legend={
-				<div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-					<Legend
-						items={(['veh', 'ped', 'bike'] as const).map((m) => ({
-							key: m,
-							label: MODE_LABEL[m],
-							swatch: t.mode[m],
-						}))}
+			title={title}
+			subtitle={`${fmtInt(points.length)} ${countLabel}, ${spanText} · click a dot for details`}
+			controls={
+				<>
+					<ToggleGroup<MapShow>
+						ariaLabel="Which crashes the map shows"
+						value={mapFilters.show}
+						onChange={(show) => setMapFilters({ show })}
+						options={SHOW_OPTIONS}
 					/>
-					<span className="flex items-center gap-2 text-xs text-muted-foreground">
-						Size:
-						<span
-							className="inline-block size-1.5 rounded-full bg-muted-foreground"
-							aria-hidden
-						/>{' '}
-						no injury
-						<span
-							className="inline-block size-2.5 rounded-full bg-muted-foreground"
-							aria-hidden
-						/>{' '}
-						injury
-						<span
-							className="inline-block size-4 rounded-full bg-muted-foreground"
-							aria-hidden
-						/>{' '}
-						fatal or serious
-					</span>
-				</div>
+					<Button
+						ref={expandBtn}
+						variant="outline"
+						size="sm"
+						onClick={openMapFull}
+						aria-label="Open the map full screen, with more filters"
+					>
+						<Maximize2 aria-hidden />
+						Full screen
+					</Button>
+				</>
 			}
+			legend={<MapLegend swatches={t.mode} show={mapFilters.show} />}
 			caption={
-				unplaced > 0
-					? `${fmtInt(unplaced)} crash${unplaced === 1 ? '' : 'es'} in this view had no usable location and ${unplaced === 1 ? 'is' : 'are'} not drawn.`
-					: undefined
+				active.length > 0 || unplaced > 0 ? (
+					<>
+						{active.length > 0 && (
+							<>
+								Map filtered to: {active.join(' · ')}.{' '}
+								<button
+									type="button"
+									className="font-medium text-primary underline underline-offset-2"
+									onClick={resetMapFilters}
+								>
+									Clear
+								</button>{' '}
+							</>
+						)}
+						{unplaced > 0 &&
+							`${fmtInt(unplaced)} crash${unplaced === 1 ? '' : 'es'} in this view had no usable location and ${unplaced === 1 ? 'is' : 'are'} not drawn.`}
+					</>
+				) : undefined
 			}
 		>
-			<div
-				ref={el}
-				className="isolate h-[480px] w-full overflow-hidden rounded-md border border-border"
-				role="region"
-				aria-label="Map of crash locations"
-			/>
+			{/* Keeps the card's height while the map is popped out. */}
+			<div className="h-[480px]">
+				<div
+					className={
+						mapFull
+							? 'fixed inset-0 z-50 flex flex-col bg-background'
+							: 'relative h-full'
+					}
+					role={mapFull ? 'dialog' : undefined}
+					aria-modal={mapFull || undefined}
+					aria-label={mapFull ? 'Crash map, full screen' : undefined}
+				>
+					{mapFull && (
+						<Controls
+							variant="map"
+							leading={
+								<Button
+									ref={backBtn}
+									variant="outline"
+									size="sm"
+									className="shrink-0"
+									onClick={closeMapFull}
+									aria-label="Back to dashboard"
+								>
+									<ArrowLeft aria-hidden />
+									Back<span className="hidden sm:inline">to dashboard</span>
+								</Button>
+							}
+						/>
+					)}
+					<div className={mapFull ? 'relative min-h-0 flex-1' : 'h-full'}>
+						<div
+							ref={el}
+							className={`isolate h-full w-full overflow-hidden ${mapFull ? '' : 'rounded-md border border-border'}`}
+							role="region"
+							aria-label="Map of crash locations"
+						/>
+						{mapFull && (
+							<MapFilterPod
+								count={points.length}
+								countLabel={countLabel}
+								span={spanText}
+								streets={streets}
+								causes={causes}
+								swatches={t.mode}
+								defaultOpen={!narrow}
+							/>
+						)}
+					</div>
+				</div>
+			</div>
 		</ChartCard>
 	)
 }

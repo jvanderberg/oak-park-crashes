@@ -9,7 +9,7 @@ import { PaceChart } from '@/components/PaceChart'
 import { Rankings } from '@/components/Rankings'
 import { WhoGetsHurt } from '@/components/WhoGetsHurt'
 import { Button } from '@/components/ui/button'
-import { SYSTEM_THEME, useStore } from '@/lib/store'
+import { SYSTEM_THEME, urlStateOf, useStore } from '@/lib/store'
 import { writeUrl } from '@/lib/url'
 import { useEffect } from 'react'
 
@@ -24,18 +24,20 @@ export default function App() {
 
 	// Persist view state to the URL (debounced replaceState — back button
 	// stays useful).
-	const year = useStore((s) => s.year)
-	const mode = useStore((s) => s.mode)
-	const measure = useStore((s) => s.measure)
-	const interstate = useStore((s) => s.interstate)
-	const crash = useStore((s) => s.crash)
-	const theme = useStore((s) => s.theme)
 	useEffect(() => {
-		const id = setTimeout(() => {
-			writeUrl({ year, mode, measure, interstate, crash, theme }, SYSTEM_THEME)
-		}, 200)
-		return () => clearTimeout(id)
-	}, [year, mode, measure, interstate, crash, theme])
+		let id: ReturnType<typeof setTimeout> | undefined
+		const unsub = useStore.subscribe((s) => {
+			clearTimeout(id)
+			id = setTimeout(() => writeUrl(urlStateOf(s), SYSTEM_THEME), 200)
+		})
+		const onPop = () => useStore.getState().onPopState()
+		addEventListener('popstate', onPop)
+		return () => {
+			unsub()
+			clearTimeout(id)
+			removeEventListener('popstate', onPop)
+		}
+	}, [])
 
 	return (
 		<div className="min-h-dvh">

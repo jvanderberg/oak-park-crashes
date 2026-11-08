@@ -19,14 +19,18 @@ getting better. The data refreshes automatically every day.
 - **Month by month** — stacked by mode, with the Vision Zero (Feb 18, 2025)
   and Bike Plan (Jul 22, 2025) adoptions marked.
 - **Map** — every crash with a location; color = mode, size = severity.
-  Click a dot for the full record; every crash has a shareable permalink.
+  Choose all crashes, injury crashes, or fatal & serious. **Full screen**
+  pops the map out with a filter panel: weekday/weekend, time of day,
+  street, primary cause, hit-and-run. Click a dot for the full record;
+  every crash has a shareable permalink.
 - **Where / Why** — top intersections and corridors, and the officer's
   primary contributing cause.
 - **Twelve years of IDOT data (2014 →)** — annual totals with the Vision Zero
   plan's 2018–2022 baseline shaded, with or without crashes on I-290.
 
-Filters (year · who · what to count) apply across the page and live in the
-URL, so any view can be shared.
+Filters (year · who · what to count) apply across the page; the map's own
+filters apply to the map. All of them live in the URL — including the
+full-screen map — so any view can be shared.
 
 ## Where the data comes from
 
