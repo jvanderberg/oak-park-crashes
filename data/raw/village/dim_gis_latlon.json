@@ -1,7 +1,7 @@
 {
 "source": "Village of Oak Park — Traffic Crash Dashboard (Power BI)",
 "url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
-"fetchedAt": "2026-11-08T16:20:02.650Z",
+"fetchedAt": "2026-11-08T16:49:30.631Z",
 "sourceUpdatedAt": "2026-11-08T13:07:03.860Z",
 "query": "SELECT [SourceID], [LocationDesc], [GeoX], [GeoY], [X_DD], [Y_DD], [X_GEOCODED], [Y_GEOCODED], [VOPGeoX], [VOPGeoY], [GeoXY_RMS_Coded], [SubmitDttm], [RequestID] FROM [DimGISLatLon] (model 1737776)",
 "columns": ["SourceID","LocationDesc","GeoX","GeoY","X_DD","Y_DD","X_GEOCODED","Y_GEOCODED","VOPGeoX","VOPGeoY","GeoXY_RMS_Coded","SubmitDttm","RequestID"],

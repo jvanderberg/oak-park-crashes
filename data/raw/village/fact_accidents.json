@@ -1,7 +1,7 @@
 {
 "source": "Village of Oak Park — Traffic Crash Dashboard (Power BI)",
 "url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
-"fetchedAt": "2026-11-08T16:20:02.352Z",
+"fetchedAt": "2026-11-08T16:49:30.589Z",
 "sourceUpdatedAt": "2026-11-08T13:07:03.860Z",
 "query": "SELECT [tamainid], [ReportNum], [acci_id], [case_id], [idotcolno], [Crash Date], [Crash Dttm], [CrashDttmText], [addtime], [Location], [StreetNum], [StreetName], [Intersection], [AtIntersection], [IntersectionRelated], [TotalUnits], [NumMotorVehicles], [DooringPedalcyclist], [DamageCode], [PrivateProperty], [Hit&Run], [trafcontrl], [DeviceCond], [weather], [lightcond], [1stCrashType], [TrafficWay], [rdsurface], [FlowCond], [rddefects], [1stContribCause], [2ndContribCause], [K Fatalities], [A Incapacitated], [B NonIncap], [C ReportNotEvident], [0 NoVisibleInjury], [CrashInjurySeverity], [CrashSeverity], [A NoInjury/DriveAway], [B Injury/Towed], [Beat/Zone], [Post/District], [geox], [geoy] FROM [FactAccidents] (model 1737776)",
 "columns": ["tamainid","ReportNum","acci_id","case_id","idotcolno","Crash Date","Crash Dttm","CrashDttmText","addtime","Location","StreetNum","StreetName","Intersection","AtIntersection","IntersectionRelated","TotalUnits","NumMotorVehicles","DooringPedalcyclist","DamageCode","PrivateProperty","Hit&Run","trafcontrl","DeviceCond","weather","lightcond","1stCrashType","TrafficWay","rdsurface","FlowCond","rddefects","1stContribCause","2ndContribCause","K Fatalities","A Incapacitated","B NonIncap","C ReportNotEvident","0 NoVisibleInjury","CrashInjurySeverity","CrashSeverity","A NoInjury/DriveAway","B Injury/Towed","Beat/Zone","Post/District","geox","geoy"],

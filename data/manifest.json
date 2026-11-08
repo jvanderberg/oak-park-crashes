@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T16:42:29.758Z",
+  "generatedAt": "2026-11-08T16:49:33.919Z",
   "sources": {
     "village": {
       "title": "Village of Oak Park — Traffic Crash Dashboard",
@@ -7,7 +7,7 @@
       "apiUrl": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
       "description": "Every crash on a public roadway inside the Village reported to the Oak Park Police Department since 1 Jan 2024, from the Power BI model behind the Village dashboard. Posted about a week after each crash.",
       "sourceUpdatedAt": "2026-11-08T13:07:03.860Z",
-      "fetchedAt": "2026-11-08T16:20:02.352Z",
+      "fetchedAt": "2026-11-08T16:49:30.589Z",
       "rows": 4939,
       "firstDate": "2024-01-01",
       "lastDate": "2026-10-31"
@@ -103,7 +103,7 @@
           "layer": "CRASHES__2024",
           "rows": 1423,
           "sourceUpdatedAt": "2026-07-09T19:01:49.751Z",
-          "fetchedAt": "2026-11-08T16:18:50.391Z"
+          "fetchedAt": "2026-11-08T16:49:32.004Z"
         },
         {
           "year": 2025,
@@ -111,7 +111,7 @@
           "layer": "CRASHES___2025",
           "rows": 1369,
           "sourceUpdatedAt": "2026-07-22T14:33:49.382Z",
-          "fetchedAt": "2026-11-08T16:18:52.061Z"
+          "fetchedAt": "2026-11-08T16:49:32.774Z"
         }
       ]
     },
