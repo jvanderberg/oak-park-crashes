@@ -145,10 +145,18 @@ export function CrashMap() {
 		m.fitBounds(OAK_PARK_BOUNDS)
 		L.control.zoom({ position: 'topright' }).addTo(m)
 		// Panes: basemap under the crash dots, street names above them,
-		// the permalink ring on top.
-		m.createPane('basemap').style.zIndex = '250'
-		m.createPane('labels').style.zIndex = '450'
-		m.createPane('highlight').style.zIndex = '650'
+		// the permalink ring on top. None of them take the mouse: a canvas
+		// renderer fills its whole pane, so the ring's pane above the dots
+		// would otherwise swallow every click after the first selection.
+		for (const [name, z] of [
+			['basemap', '250'],
+			['labels', '450'],
+			['highlight', '650'],
+		] as const) {
+			const pane = m.createPane(name)
+			pane.style.zIndex = z
+			pane.style.pointerEvents = 'none'
+		}
 		m.attributionControl.addAttribution(
 			'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 		)
@@ -258,7 +266,11 @@ export function CrashMap() {
 				fillOpacity: c.sev === 'O' ? 0.55 : 0.9,
 			})
 			marker.bindPopup(() => popupHtml(c), { maxWidth: 280 })
-			marker.on('popupopen', () => setCrash(c.id))
+			marker.on('popupopen', () => {
+				// Already open here — the permalink effect mustn't re-open it.
+				opened.current = c.id
+				setCrash(c.id)
+			})
 			marker.on('popupclose', () => {
 				if (useStore.getState().crash === c.id) setCrash(null)
 			})
@@ -288,12 +300,16 @@ export function CrashMap() {
 			opened.current = selected.id
 			const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 			m.setView(at, Math.max(m.getZoom(), 16), { animate: !reduce })
+			const id = selected.id
 			L.popup({ maxWidth: 280 })
 				.setLatLng(at)
 				.setContent(popupHtml(selected))
+				.on('remove', () => {
+					if (useStore.getState().crash === id) setCrash(null)
+				})
 				.openOn(m)
 		}
-	}, [selected, theme, mapReady])
+	}, [selected, theme, mapReady, setCrash])
 
 	// Pop-out: resize the map to its new box, let the wheel zoom (it can't
 	// hijack page scrolling when the map is the whole page), and re-frame
