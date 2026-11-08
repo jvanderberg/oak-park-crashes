@@ -17,8 +17,7 @@ getting better. The data refreshes automatically every day.
   pedestrian, bicycle) and how often each kind of crash injures someone.
 - **Year-to-date pace** — running totals for each year on a shared
   Jan 1 → Dec 31 axis.
-- **Month by month** — stacked by mode, with the Vision Zero (Feb 18, 2025)
-  and Bike Plan (Jul 22, 2025) adoptions marked.
+- **Month by month** — stacked by mode.
 - **Map** — every crash with a location; color = mode, size = severity.
   The card lists every filter in effect. **Full screen** pops the map out
   under the page's filter bar, with the more-filters form in a side panel.

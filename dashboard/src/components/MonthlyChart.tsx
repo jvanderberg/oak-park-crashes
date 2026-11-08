@@ -3,7 +3,6 @@ import { PLOT_CONFIG, Plot } from '@/components/Plot'
 import { type ChartLayout, baseLayout, resolveChartTheme } from '@/lib/colors'
 import { monthlySeries } from '@/lib/crashes'
 import { fmtDate, fmtMonth } from '@/lib/format'
-import { MILESTONES } from '@/lib/milestones'
 import { useStore } from '@/lib/store'
 import { stackedBars, totalTrace, visibleModes } from '@/lib/traces'
 import { MEASURE_LABEL, MODE_LABEL } from '@/lib/types'
@@ -88,33 +87,6 @@ export function MonthlyChart() {
 			),
 		},
 		yaxis: { ...base.yaxis, title: { text: '' } },
-		shapes: MILESTONES.filter((m) => x.includes(m.date.slice(0, 7))).map(
-			(m) => ({
-				type: 'line',
-				xref: 'x',
-				yref: 'paper',
-				x0: m.date.slice(0, 7),
-				x1: m.date.slice(0, 7),
-				y0: 0,
-				y1: 1,
-				line: { color: t.mutedForeground, width: 1, dash: 'dot' },
-				layer: 'below',
-			}),
-		),
-		// Milestone names don't fit on a phone; the caption names them.
-		annotations: (narrow ? [] : MILESTONES)
-			.filter((m) => x.includes(m.date.slice(0, 7)))
-			.map((m, i) => ({
-				xref: 'x',
-				yref: 'paper',
-				x: m.date.slice(0, 7),
-				y: i % 2 === 0 ? 1 : 0.9,
-				text: m.label,
-				showarrow: false,
-				xanchor: 'left',
-				xshift: 4,
-				font: { size: 10, color: t.mutedForeground },
-			})),
 	}
 
 	return (
@@ -133,26 +105,9 @@ export function MonthlyChart() {
 				) : undefined
 			}
 			caption={
-				<>
-					Dotted lines mark the Village Board’s adoption of the{' '}
-					{MILESTONES.map((m, i) => (
-						<span key={m.date}>
-							{i > 0 && ' and '}
-							<a
-								href={m.source}
-								target="_blank"
-								rel="noreferrer"
-								className="underline underline-offset-2"
-							>
-								{m.label.replace(' adopted', '')}
-							</a>{' '}
-							({fmtDate(m.date)})
-						</span>
-					))}
-					.
-					{partialLast &&
-						` The last bar is a partial month (through ${fmtDate(last)}).`}
-				</>
+				partialLast
+					? `The last bar is a partial month (through ${fmtDate(last)}).`
+					: undefined
 			}
 			table={
 				<SeriesTable
