@@ -1,23 +1,34 @@
 import { useMemo } from 'react'
 import { type Period, byMode, inPeriod, periodFor } from './crashes'
 import { passesFilters } from './filters'
+import { fmtDate, fmtMonth } from './format'
 import { useStore } from './store'
 import type { VillageCrash } from './types'
 
 export interface VillageView {
 	years: number[]
-	year: number
+	/** Selected year; null = all years. */
+	year: number | null
+	/** The selected year, or the latest year when all years are selected —
+	 * for charts that always highlight one year. */
+	focusYear: number
 	period: Period
+	/** Period of `focusYear` (cut at the last data date when in progress). */
+	focusPeriod: Period
+	/** "2026 to date" / "2025" / "All years". */
+	yearLabel: string
+	/** "Jan 1 – Oct 31, 2026" / "all of 2025" / "Jan 2024 – Oct 31, 2026". */
+	span: string
 	firstDate: string
 	lastDate: string
-	/** Village crashes in the focus period, after every filter. */
+	/** Village crashes in the selected period, after every filter. */
 	crashes: VillageCrash[]
 	/** All Village crashes after every filter (every year). */
 	allModeFiltered: VillageCrash[]
 	/** Every year, after the more-filters but not the mode filter — for the
 	 * card that always splits by mode. */
 	allModes: VillageCrash[]
-	/** Focus period + mode, before the more-filters — dropdown counts. */
+	/** Selected period + mode, before the more-filters — dropdown counts. */
 	unfiltered: VillageCrash[]
 }
 
@@ -39,14 +50,34 @@ export function useVillageView(): VillageView | null {
 		const latest = years.at(-1) ?? Number(lastDate.slice(0, 4))
 		// A URL year outside the data degrades to the latest year.
 		const year =
-			yearParam !== null && years.includes(yearParam) ? yearParam : latest
+			yearParam === 'all'
+				? null
+				: yearParam !== null && years.includes(yearParam)
+					? yearParam
+					: latest
 		const period = periodFor(year, lastDate)
+		const focusYear = year ?? latest
+		const focusPeriod = periodFor(focusYear, lastDate)
 		const allModes = village.filter((c) => passesFilters(c, filters))
 		const allModeFiltered = byMode(allModes, mode)
 		return {
 			years,
 			year,
+			focusYear,
 			period,
+			focusPeriod,
+			yearLabel:
+				year === null
+					? 'All years'
+					: period.partial
+						? `${year} to date`
+						: String(year),
+			span:
+				year === null
+					? `${fmtMonth(firstDate.slice(0, 7))} – ${fmtDate(lastDate)}`
+					: period.partial
+						? `Jan 1 – ${fmtDate(lastDate)}`
+						: `all of ${year}`,
 			firstDate,
 			lastDate,
 			crashes: inPeriod(allModeFiltered, period),
@@ -55,26 +86,4 @@ export function useVillageView(): VillageView | null {
 			unfiltered: inPeriod(byMode(village, mode), period),
 		}
 	}, [village, manifest, yearParam, mode, filters])
-}
-
-/** "Jan 1 – Oct 31" style label for a period's span. */
-export function periodSpan(p: Period, lastDate: string): string {
-	if (!p.partial) return `all of ${p.year}`
-	const m = Number(lastDate.slice(5, 7)) - 1
-	const d = Number(lastDate.slice(8, 10))
-	const MONTHS = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	]
-	return `Jan 1 – ${MONTHS[m]} ${d}`
 }

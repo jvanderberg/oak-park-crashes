@@ -3,7 +3,7 @@ import { inPeriod, modeShares } from '@/lib/crashes'
 import { fmtInt, fmtPct } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import { MEASURE_LABEL, MODE_LABEL, type Mode } from '@/lib/types'
-import { periodSpan, useVillageView } from '@/lib/view'
+import { useVillageView } from '@/lib/view'
 import { useMemo } from 'react'
 
 const SWATCH: Record<Mode, string> = {
@@ -40,7 +40,6 @@ export function WhoGetsHurt() {
 	const crashTotal = shares.reduce((s, m) => s + m.crashes, 0)
 	const veh = shares.find((s) => s.mode === 'veh')
 	const ped = shares.find((s) => s.mode === 'ped')
-	const span = periodSpan(view.period, view.lastDate)
 	const rateRatio =
 		veh && ped && veh.injuryRate > 0 ? ped.injuryRate / veh.injuryRate : null
 
@@ -53,8 +52,8 @@ export function WhoGetsHurt() {
 				Who gets hurt
 			</h2>
 			<p className="text-xs text-muted-foreground">
-				{MEASURE_LABEL[measure]} by who was involved, {span}
-				{view.period.partial ? `, ${view.year}` : ''} · {fmtInt(total)} in all
+				{MEASURE_LABEL[measure]} by who was involved, {view.span} ·{' '}
+				{fmtInt(total)} in all
 			</p>
 
 			{total > 0 ? (

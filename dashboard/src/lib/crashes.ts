@@ -39,7 +39,8 @@ export function byMode<T extends Crash>(crashes: T[], mode: ModeFilter): T[] {
 // ---- Periods ---------------------------------------------------------------
 
 export interface Period {
-	year: number
+	/** null = every year in the data. */
+	year: number | null
 	/** Inclusive day-of-year cutoff; 366 = whole year. */
 	throughDoy: number
 	/** True when the period stops short of Dec 31 (year still in progress). */
@@ -51,7 +52,8 @@ export interface Period {
  * complete through `lastDate`, so it — and the comparison year — are cut at
  * the same day of the year. Earlier years are whole.
  */
-export function periodFor(year: number, lastDate: string): Period {
+export function periodFor(year: number | null, lastDate: string): Period {
+	if (year === null) return { year: null, throughDoy: 366, partial: false }
 	const lastYear = Number(lastDate.slice(0, 4))
 	if (year < lastYear) return { year, throughDoy: 366, partial: false }
 	const m = Number(lastDate.slice(5, 7)) - 1
@@ -73,6 +75,7 @@ export function crashCalendarDoy(c: Crash): number {
 }
 
 export function inPeriod<T extends Crash>(crashes: T[], p: Period): T[] {
+	if (p.year === null) return crashes
 	return crashes.filter(
 		(c) => c.year === p.year && crashCalendarDoy(c) <= p.throughDoy,
 	)
@@ -93,7 +96,9 @@ export function compare(
 	firstYear: number,
 ): Comparison {
 	const current = total(inPeriod(crashes, p), measure)
-	if (p.year - 1 < firstYear) return { current, previous: null, change: null }
+	// Every year selected, or the first year of data: nothing to compare.
+	if (p.year === null || p.year - 1 < firstYear)
+		return { current, previous: null, change: null }
 	const previous = total(inPeriod(crashes, { ...p, year: p.year - 1 }), measure)
 	return {
 		current,

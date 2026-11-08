@@ -4,7 +4,7 @@ import { type Ranked, locationKey, rank } from '@/lib/crashes'
 import { fmtInt } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import { MEASURE_LABEL, type VillageCrash } from '@/lib/types'
-import { periodSpan, useVillageView } from '@/lib/view'
+import { useVillageView } from '@/lib/view'
 import { useMemo, useState } from 'react'
 
 type WhereBy = 'place' | 'street'
@@ -44,7 +44,7 @@ export function Rankings() {
 			</div>
 		)
 	}
-	const span = `${periodSpan(view.period, view.lastDate)}${view.period.partial ? `, ${view.year}` : ''}`
+	const span = view.span
 	const label = MEASURE_LABEL[measure]
 	const whyKnown = why.filter((r) => !UNHELPFUL_CAUSES.has(r.key))
 

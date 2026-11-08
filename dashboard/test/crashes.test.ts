@@ -118,6 +118,21 @@ describe('periods', () => {
 		expect(cmp.previous).toBe(1)
 		expect(cmp.change).toBe(0)
 	})
+	it('"All years" spans every year and has no comparison', () => {
+		const p = periodFor(null, '2026-10-31')
+		expect(p).toEqual({ year: null, throughDoy: 366, partial: false })
+		const cs = [
+			crash('2024-03-01', 'B'),
+			crash('2025-12-31', 'C'),
+			crash('2026-10-31', 'O'),
+		]
+		expect(inPeriod(cs, p)).toHaveLength(3)
+		expect(compare(cs, p, 'injury', 2024)).toEqual({
+			current: 2,
+			previous: null,
+			change: null,
+		})
+	})
 	it('has no comparison for the first year of data', () => {
 		const cmp = compare(
 			[crash('2024-05-01', 'C')],

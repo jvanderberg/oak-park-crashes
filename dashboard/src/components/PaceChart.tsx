@@ -71,7 +71,7 @@ export function PaceChart() {
 		)
 
 	const t = resolveChartTheme()
-	const focus = view.year
+	const focus = view.focusYear
 	const others = lines.filter((l) => l.year !== focus).map((l) => l.year)
 	const colorOf = (y: number) => {
 		if (y === focus) return t.primary
@@ -79,7 +79,7 @@ export function PaceChart() {
 		const rank = others.length - 1 - others.indexOf(y)
 		return rank === 0 ? t.pastYears[1] : t.pastYears[0]
 	}
-	const cut = view.period.throughDoy
+	const cut = view.focusPeriod.throughDoy
 	const atCut = (l: (typeof lines)[number]) =>
 		l.values[Math.min(cut, l.values.length) - 1] ?? 0
 
@@ -138,7 +138,7 @@ export function PaceChart() {
 		annotations: narrow
 			? []
 			: lines.map((l) => {
-					const isFocus = l.year === focus && view.period.partial
+					const isFocus = l.year === focus && view.focusPeriod.partial
 					return {
 						x: doyDate(l.values.length),
 						y: l.values.at(-1) ?? 0,
@@ -154,7 +154,7 @@ export function PaceChart() {
 						},
 					}
 				}),
-		shapes: view.period.partial
+		shapes: view.focusPeriod.partial
 			? [
 					{
 						type: 'line',
@@ -190,7 +190,7 @@ export function PaceChart() {
 				/>
 			}
 			caption={
-				lastYear && prev && view.period.partial
+				lastYear && prev && view.focusPeriod.partial
 					? `Through ${fmtMonthDay(view.lastDate)}: ${fmtInt(atCut(lastYear))} in ${lastYear.year} vs ${fmtInt(atCut(prev))} in ${prev.year} on the same date.`
 					: undefined
 			}

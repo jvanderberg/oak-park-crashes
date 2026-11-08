@@ -27,46 +27,57 @@ export function Controls({
 	const setMode = useStore((s) => s.setMode)
 	const measure = useStore((s) => s.measure)
 	const setMeasure = useStore((s) => s.setMeasure)
-	// The full-screen bar wraps instead of scrolling; on phones the five
-	// Who options only fit on one row with short labels.
-	const shortWho = useNarrow() && variant === 'map'
+	// Both bars wrap rather than scroll sideways. On phones the labels hide
+	// (each switch's legend still names it for screen readers), the five
+	// Who options take short labels so they fit one row, and More filters
+	// rides on the Year row.
+	const narrow = useNarrow()
+	const more = variant === 'page' ? <MoreFilters /> : null
 
 	if (!view) return <div className="h-9" />
 	const latest = view.years.at(-1)
+	const latestPartial = !view.lastDate.endsWith('-12-31')
 
 	return (
 		<div
 			className={
 				variant === 'page'
-					? 'thin-scroll sticky top-0 z-40 -mx-4 flex items-center gap-x-4 gap-y-2 overflow-x-auto border-b border-border bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:flex-wrap'
+					? 'sticky top-0 z-40 -mx-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80'
 					: 'flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background px-3 py-2'
 			}
 		>
 			{leading}
-			<Labeled label="Year" compact={variant === 'map'}>
+			<Labeled label="Year">
 				<ToggleGroup
 					ariaLabel="Year"
-					value={String(view.year)}
-					onChange={(v) => setYear(Number(v) === latest ? null : Number(v))}
-					options={view.years.map((y) => ({
-						value: String(y),
-						label:
-							y === latest && view.period.partial ? `${y} to date` : String(y),
-					}))}
+					value={view.year === null ? 'all' : String(view.year)}
+					onChange={(v) =>
+						setYear(
+							v === 'all' ? 'all' : Number(v) === latest ? null : Number(v),
+						)
+					}
+					options={[
+						...view.years.map((y) => ({
+							value: String(y),
+							label: y === latest && latestPartial ? `${y} to date` : String(y),
+						})),
+						{ value: 'all', label: narrow ? 'All' : 'All years' },
+					]}
 				/>
 			</Labeled>
-			<Labeled label="Who" compact={variant === 'map'}>
+			{narrow && more}
+			<Labeled label="Who">
 				<ToggleGroup<ModeFilter>
 					ariaLabel="Crash mode"
 					value={mode}
 					onChange={setMode}
 					options={MODE_FILTERS.map((m) => ({
 						value: m,
-						label: shortWho ? MODE_FILTER_SHORT[m] : MODE_FILTER_LABEL[m],
+						label: narrow ? MODE_FILTER_SHORT[m] : MODE_FILTER_LABEL[m],
 					}))}
 				/>
 			</Labeled>
-			<Labeled label="Count" compact={variant === 'map'}>
+			<Labeled label="Count">
 				<ToggleGroup<Measure>
 					ariaLabel="What to count"
 					value={measure}
@@ -77,28 +88,21 @@ export function Controls({
 					}))}
 				/>
 			</Labeled>
-			{variant === 'page' && (
-				<>
-					<MoreFilters />
-					<FilterChips />
-				</>
-			)}
+			{!narrow && more}
+			{variant === 'page' && <FilterChips />}
 		</div>
 	)
 }
 
-/** `compact` hides the visible label on phones (the switch's legend still
- * names it for screen readers) so the full-screen bar's widest switch fits. */
+/** The visible label hides on phones; the switch's legend still names it
+ * for screen readers. */
 function Labeled({
 	label,
-	compact = false,
 	children,
-}: { label: string; compact?: boolean; children: React.ReactNode }) {
+}: { label: string; children: React.ReactNode }) {
 	return (
 		<div className="flex shrink-0 items-center gap-1.5">
-			<span
-				className={`text-xs font-medium text-muted-foreground ${compact ? 'max-sm:sr-only' : ''}`}
-			>
+			<span className="text-xs font-medium text-muted-foreground max-sm:sr-only">
 				{label}
 			</span>
 			{children}

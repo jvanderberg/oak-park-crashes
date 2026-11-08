@@ -4,7 +4,7 @@ import { describeFilters } from '@/lib/filters'
 import { fmtInt, fmtPct } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import { MODE_FILTER_LABEL, type Measure } from '@/lib/types'
-import { periodSpan, useVillageView } from '@/lib/view'
+import { useVillageView } from '@/lib/view'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { useMemo } from 'react'
 
@@ -35,7 +35,7 @@ export function Kpis() {
 
 	const rows = useMemo(() => {
 		if (!view) return null
-		const first = view.years[0] ?? view.year
+		const first = view.years[0] ?? view.focusYear
 		return CARDS.map((c) => ({
 			...c,
 			cmp: compare(view.allModeFiltered, view.period, c.measure, first),
@@ -56,7 +56,6 @@ export function Kpis() {
 		)
 	}
 
-	const span = periodSpan(view.period, view.lastDate)
 	const who = [
 		mode === 'all' ? null : `${MODE_FILTER_LABEL[mode].toLowerCase()} crashes`,
 		...describeFilters(filters).map((a) => a.label),
@@ -68,9 +67,10 @@ export function Kpis() {
 	return (
 		<section aria-label="Headline numbers">
 			<p className="mb-2 text-xs text-muted-foreground">
-				Oak Park police reports, {span}
-				{view.period.partial ? `, ${view.year}` : ''}
-				{who}. Changes compare the same dates a year earlier.
+				Oak Park police reports, {view.span}
+				{who}.
+				{view.year !== null &&
+					' Changes compare the same dates a year earlier.'}
 			</p>
 			<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 				{rows.map((r) => (
@@ -79,7 +79,8 @@ export function Kpis() {
 						label={r.label}
 						hint={r.hint}
 						cmp={r.cmp}
-						prevYear={view.year - 1}
+						prevYear={view.focusYear - 1}
+						allYears={view.year === null}
 						active={r.measure === measure}
 					/>
 				))}
@@ -93,12 +94,14 @@ function KpiCard({
 	hint,
 	cmp,
 	prevYear,
+	allYears,
 	active,
 }: {
 	label: string
 	hint: string
 	cmp: Comparison
 	prevYear: number
+	allYears: boolean
 	active: boolean
 }) {
 	return (
@@ -108,7 +111,7 @@ function KpiCard({
 		>
 			<p className="text-xs font-medium text-muted-foreground">{label}</p>
 			<p className="mt-1 text-2xl font-semibold">{fmtInt(cmp.current)}</p>
-			<Delta cmp={cmp} prevYear={prevYear} />
+			<Delta cmp={cmp} prevYear={prevYear} allYears={allYears} />
 			<p className="mt-0.5 text-[0.7rem] text-muted-foreground">{hint}</p>
 		</div>
 	)
@@ -116,11 +119,15 @@ function KpiCard({
 
 /** Change vs. the same span last year. For crashes, up is bad: the icon and
  * the word carry the direction; color only reinforces it. */
-function Delta({ cmp, prevYear }: { cmp: Comparison; prevYear: number }) {
+function Delta({
+	cmp,
+	prevYear,
+	allYears,
+}: { cmp: Comparison; prevYear: number; allYears: boolean }) {
 	if (cmp.previous === null) {
 		return (
 			<p className="mt-1 text-xs text-muted-foreground">
-				first year of Village data
+				{allYears ? 'all years of Village data' : 'first year of Village data'}
 			</p>
 		)
 	}

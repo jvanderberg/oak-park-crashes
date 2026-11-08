@@ -11,8 +11,9 @@ export type Theme = 'light' | 'dark'
 export type Interstate = 'incl' | 'excl'
 
 export interface UrlState {
-	/** Focus year for the Village data; null = latest year in the data. */
-	year: number | null
+	/** Focus year for the Village data; null = latest year in the data,
+	 * 'all' = every year. */
+	year: number | 'all' | null
 	mode: ModeFilter
 	measure: Measure
 	interstate: Interstate
@@ -61,7 +62,12 @@ export function parseUrl(search: string): UrlState {
 	const theme = p.get('theme')
 	const crash = p.get('crash')
 	return {
-		year: Number.isFinite(y) && y >= 2000 && y <= 2100 ? y : null,
+		year:
+			p.get('year') === 'all'
+				? 'all'
+				: Number.isFinite(y) && y >= 2000 && y <= 2100
+					? y
+					: null,
 		mode: oneOf(p.get('mode'), MODE_FILTERS, DEFAULT_URL_STATE.mode),
 		measure: oneOf(p.get('measure'), MEASURES, DEFAULT_URL_STATE.measure),
 		interstate: p.get('i290') === 'incl' ? 'incl' : 'excl',

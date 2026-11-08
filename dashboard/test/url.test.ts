@@ -44,6 +44,10 @@ describe('url state', () => {
 		}
 		expect(parseUrl(`?${serializeUrl(s, 'light')}`)).toEqual(s)
 	})
+	it('round-trips "All years"', () => {
+		expect(parseUrl('?year=all').year).toBe('all')
+		expect(serializeUrl({ ...DEFAULT_URL_STATE, year: 'all' })).toBe('year=all')
+	})
 	it('accepts the ped + bike who filter', () => {
 		expect(parseUrl('?mode=pedbike').mode).toBe('pedbike')
 		expect(serializeUrl({ ...DEFAULT_URL_STATE, mode: 'pedbike' })).toBe(

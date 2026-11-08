@@ -57,11 +57,8 @@ export function AppliedFilters({ view }: { view: VillageView }) {
 	const mode = useStore((s) => s.mode)
 	const measure = useStore((s) => s.measure)
 	const f = useStore((s) => s.filters)
-	const latest = view.years.at(-1)
 	const labels = [
-		view.year === latest && view.period.partial
-			? `${view.year} to date`
-			: String(view.year),
+		view.yearLabel,
 		MODE_FILTER_LABEL[mode],
 		MEASURE_SHORT[measure],
 		...describeFilters(f).map((a) => a.label),

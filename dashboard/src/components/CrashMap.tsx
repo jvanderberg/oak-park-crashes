@@ -18,7 +18,7 @@ import {
 	type VillageCrash,
 } from '@/lib/types'
 import { useNarrow } from '@/lib/useNarrow'
-import { periodSpan, useVillageView } from '@/lib/view'
+import { useVillageView } from '@/lib/view'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { ArrowLeft, Maximize2 } from 'lucide-react'
@@ -362,11 +362,10 @@ export function CrashMap() {
 			</ChartCard>
 		)
 	const t = resolveChartTheme()
-	const span = periodSpan(view.period, view.lastDate)
 	const unplaced = shown.length - points.length
 	const countLabel = MAP_NOUN[measure]
 	const title = `Where ${countLabel} happened`
-	const spanText = `${span}${view.period.partial ? `, ${view.year}` : ''}`
+	const spanText = view.span
 
 	return (
 		<ChartCard

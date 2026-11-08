@@ -50,7 +50,7 @@ interface AppState {
 	manifest: Manifest | null
 
 	// URL-serialized view state.
-	year: number | null
+	year: number | 'all' | null
 	mode: ModeFilter
 	measure: Measure
 	interstate: Interstate
@@ -60,7 +60,7 @@ interface AppState {
 	filters: CrashFilters
 
 	load: () => Promise<void>
-	setYear: (y: number | null) => void
+	setYear: (y: number | 'all' | null) => void
 	setMode: (m: ModeFilter) => void
 	setMeasure: (m: Measure) => void
 	setInterstate: (i: Interstate) => void

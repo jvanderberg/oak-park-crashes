@@ -141,7 +141,7 @@ export function FilterChips() {
 	if (active.length === 0) return null
 	return (
 		<ul
-			className="flex shrink-0 items-center gap-1.5 text-xs"
+			className="flex flex-wrap items-center gap-1.5 text-xs"
 			aria-label="Active filters"
 		>
 			{active.map((a) => (
