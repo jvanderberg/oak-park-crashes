@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { type Period, byMode, inPeriod, periodFor } from './crashes'
+import { passesFilters } from './filters'
 import { useStore } from './store'
 import type { VillageCrash } from './types'
 
@@ -9,10 +10,15 @@ export interface VillageView {
 	period: Period
 	firstDate: string
 	lastDate: string
-	/** Village crashes in the focus period, after the mode filter. */
+	/** Village crashes in the focus period, after every filter. */
 	crashes: VillageCrash[]
-	/** All Village crashes after the mode filter (every year). */
+	/** All Village crashes after every filter (every year). */
 	allModeFiltered: VillageCrash[]
+	/** Every year, after the more-filters but not the mode filter — for the
+	 * card that always splits by mode. */
+	allModes: VillageCrash[]
+	/** Focus period + mode, before the more-filters — dropdown counts. */
+	unfiltered: VillageCrash[]
 }
 
 /** Derived view of the Village data shared by every component. */
@@ -21,6 +27,7 @@ export function useVillageView(): VillageView | null {
 	const manifest = useStore((s) => s.manifest)
 	const yearParam = useStore((s) => s.year)
 	const mode = useStore((s) => s.mode)
+	const filters = useStore((s) => s.filters)
 
 	return useMemo(() => {
 		if (!village || !manifest || village.length === 0) return null
@@ -34,7 +41,8 @@ export function useVillageView(): VillageView | null {
 		const year =
 			yearParam !== null && years.includes(yearParam) ? yearParam : latest
 		const period = periodFor(year, lastDate)
-		const allModeFiltered = byMode(village, mode)
+		const allModes = village.filter((c) => passesFilters(c, filters))
+		const allModeFiltered = byMode(allModes, mode)
 		return {
 			years,
 			year,
@@ -43,8 +51,10 @@ export function useVillageView(): VillageView | null {
 			lastDate,
 			crashes: inPeriod(allModeFiltered, period),
 			allModeFiltered,
+			allModes,
+			unfiltered: inPeriod(byMode(village, mode), period),
 		}
-	}, [village, manifest, yearParam, mode])
+	}, [village, manifest, yearParam, mode, filters])
 }
 
 /** "Jan 1 – Oct 31" style label for a period's span. */

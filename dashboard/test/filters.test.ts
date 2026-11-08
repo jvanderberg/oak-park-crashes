@@ -1,12 +1,12 @@
 import {
-	DEFAULT_MAP_FILTERS,
-	type MapFilters,
-	describeMapFilters,
+	type CrashFilters,
+	DEFAULT_FILTERS,
+	describeFilters,
 	hourBucket,
-	passesMapFilters,
+	passesFilters,
 	tally,
 	weekday,
-} from '@/lib/mapFilters'
+} from '@/lib/filters'
 import type { VillageCrash } from '@/lib/types'
 import { describe, expect, it } from 'vitest'
 
@@ -40,8 +40,8 @@ function crash(over: Partial<VillageCrash> = {}): VillageCrash {
 		...over,
 	}
 }
-const f = (over: Partial<MapFilters>): MapFilters => ({
-	...DEFAULT_MAP_FILTERS,
+const f = (over: Partial<CrashFilters>): CrashFilters => ({
+	...DEFAULT_FILTERS,
 	...over,
 })
 
@@ -66,30 +66,38 @@ describe('map filters', () => {
 		expect(weekday('2026-11-08')).toBe(0)
 	})
 	it('passes everything by default', () => {
-		expect(passesMapFilters(crash(), DEFAULT_MAP_FILTERS)).toBe(true)
+		expect(passesFilters(crash(), DEFAULT_FILTERS)).toBe(true)
 	})
 	it('filters by time, days, street (either leg), cause and hit-and-run', () => {
 		const c = crash()
-		expect(passesMapFilters(c, f({ time: 'evening' }))).toBe(true)
-		expect(passesMapFilters(c, f({ time: 'morning' }))).toBe(false)
-		expect(passesMapFilters(crash({ hour: null }), f({ time: 'night' }))).toBe(
+		expect(passesFilters(c, f({ time: 'evening' }))).toBe(true)
+		expect(passesFilters(c, f({ time: 'morning' }))).toBe(false)
+		expect(passesFilters(crash({ hour: null }), f({ time: 'night' }))).toBe(
 			false,
 		)
-		expect(passesMapFilters(c, f({ days: 'weekday' }))).toBe(true)
-		expect(passesMapFilters(c, f({ days: 'weekend' }))).toBe(false)
-		expect(passesMapFilters(c, f({ street: 'Oak Park Ave' }))).toBe(true)
-		expect(passesMapFilters(c, f({ street: 'Lake St' }))).toBe(false)
-		expect(passesMapFilters(c, f({ cause: 'Following Too Closely' }))).toBe(
-			true,
-		)
-		expect(passesMapFilters(c, f({ hitRun: true }))).toBe(false)
-		expect(passesMapFilters(crash({ hitRun: true }), f({ hitRun: true }))).toBe(
+		expect(passesFilters(c, f({ days: 'weekday' }))).toBe(true)
+		expect(passesFilters(c, f({ days: 'weekend' }))).toBe(false)
+		expect(passesFilters(c, f({ street: 'Oak Park Ave' }))).toBe(true)
+		expect(passesFilters(c, f({ street: 'Lake St' }))).toBe(false)
+		expect(passesFilters(c, f({ cause: 'Following Too Closely' }))).toBe(true)
+		expect(passesFilters(c, f({ hitRun: true }))).toBe(false)
+		expect(passesFilters(crash({ hitRun: true }), f({ hitRun: true }))).toBe(
 			true,
 		)
 	})
+	it('filters IDOT crashes (no street names) on everything but street', () => {
+		const { location, street, cross, ...idotLike } = crash({ hour: 21 })
+		expect(location && street && cross).toBeTruthy()
+		const f2 = f({ time: 'night', street: 'Madison St' })
+		expect(passesFilters(idotLike, f2)).toBe(false)
+		expect(passesFilters(idotLike, f2, 'street')).toBe(true)
+		expect(passesFilters(idotLike, f({ time: 'morning' }), 'street')).toBe(
+			false,
+		)
+	})
 	it('describes active filters in plain words', () => {
-		expect(describeMapFilters(DEFAULT_MAP_FILTERS)).toEqual([])
-		expect(describeMapFilters(f({ street: 'Lake St', hitRun: true }))).toEqual([
+		expect(describeFilters(DEFAULT_FILTERS)).toEqual([])
+		expect(describeFilters(f({ street: 'Lake St', hitRun: true }))).toEqual([
 			{ key: 'street', label: 'On Lake St' },
 			{ key: 'hitRun', label: 'Hit and run' },
 		])

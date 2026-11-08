@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { decodeIdot, decodeVillage } from './data'
-import { DEFAULT_MAP_FILTERS, type MapFilters } from './mapFilters'
+import { type CrashFilters, DEFAULT_FILTERS } from './filters'
 import type {
 	Basemap,
 	CompactTable,
@@ -57,7 +57,7 @@ interface AppState {
 	crash: string | null
 	theme: Theme
 	mapFull: boolean
-	mapFilters: MapFilters
+	filters: CrashFilters
 
 	load: () => Promise<void>
 	setYear: (y: number | null) => void
@@ -66,9 +66,9 @@ interface AppState {
 	setInterstate: (i: Interstate) => void
 	setCrash: (id: string | null) => void
 	toggleTheme: () => void
-	setMapFilters: (patch: Partial<MapFilters>) => void
-	resetMapFilters: () => void
-	clearMapFilter: (key: keyof MapFilters) => void
+	setFilters: (patch: Partial<CrashFilters>) => void
+	resetFilters: () => void
+	clearFilter: (key: keyof CrashFilters) => void
 	openMapFull: () => void
 	closeMapFull: () => void
 	/** Browser Back/Forward: adopt the entry's pop-out state, then rewrite
@@ -85,7 +85,7 @@ export function urlStateOf(s: AppState): UrlState {
 		crash: s.crash,
 		theme: s.theme,
 		mapFull: s.mapFull,
-		mapFilters: s.mapFilters,
+		filters: s.filters,
 	}
 }
 
@@ -107,7 +107,7 @@ export const useStore = create<AppState>((set, get) => ({
 	crash: initial.crash,
 	theme: initial.theme ?? SYSTEM_THEME,
 	mapFull: initial.mapFull,
-	mapFilters: initial.mapFilters,
+	filters: initial.filters,
 
 	async load() {
 		set({ status: 'loading', error: null })
@@ -149,12 +149,11 @@ export const useStore = create<AppState>((set, get) => ({
 			applyThemeClass(theme)
 			return { theme }
 		}),
-	setMapFilters: (patch) =>
-		set((s) => ({ mapFilters: { ...s.mapFilters, ...patch } })),
-	resetMapFilters: () => set({ mapFilters: DEFAULT_MAP_FILTERS }),
-	clearMapFilter: (key) =>
+	setFilters: (patch) => set((s) => ({ filters: { ...s.filters, ...patch } })),
+	resetFilters: () => set({ filters: DEFAULT_FILTERS }),
+	clearFilter: (key) =>
 		set((s) => ({
-			mapFilters: { ...s.mapFilters, [key]: DEFAULT_MAP_FILTERS[key] },
+			filters: { ...s.filters, [key]: DEFAULT_FILTERS[key] },
 		})),
 	openMapFull: () => {
 		if (get().mapFull) return

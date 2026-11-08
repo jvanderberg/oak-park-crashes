@@ -19,13 +19,12 @@ const SWATCH: Record<Mode, string> = {
  */
 export function WhoGetsHurt() {
 	const view = useVillageView()
-	const village = useStore((s) => s.village)
 	const measure = useStore((s) => s.measure)
 
 	const shares = useMemo(() => {
-		if (!view || !village) return null
-		return modeShares(inPeriod(village, view.period), measure)
-	}, [view, village, measure])
+		if (!view) return null
+		return modeShares(inPeriod(view.allModes, view.period), measure)
+	}, [view, measure])
 
 	if (!view || !shares) {
 		return (

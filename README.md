@@ -10,8 +10,9 @@ getting better. The data refreshes automatically every day.
 ## What's in the dashboard
 
 - **Headline numbers** — crashes, injury crashes, crashes that killed or
-  seriously injured someone, and people hurt, each compared with *the same dates a year
-  earlier* (so a year in progress is never compared with a whole year).
+  seriously injured someone, and people hurt, each compared with *the same
+  dates a year earlier* (so a year in progress is never compared with a
+  whole year).
 - **Who gets hurt** — the share of harm by who was involved (vehicles only,
   pedestrian, bicycle) and how often each kind of crash injures someone.
 - **Year-to-date pace** — running totals for each year on a shared
@@ -20,16 +21,17 @@ getting better. The data refreshes automatically every day.
   and Bike Plan (Jul 22, 2025) adoptions marked.
 - **Map** — every crash with a location; color = mode, size = severity.
   The card lists every filter in effect. **Full screen** pops the map out
-  under the page's filter bar, with a panel of map-only filters:
-  weekday/weekend, time of day, street, primary cause, hit-and-run. Click a dot for the full record;
-  every crash has a shareable permalink.
+  under the page's filter bar, with the more-filters form in a side panel.
+  Click a dot for the full record; every crash has a shareable permalink.
 - **Where / Why** — top intersections and corridors, and the officer's
   primary contributing cause.
 - **Twelve years of IDOT data (2014 →)** — annual totals with the Vision Zero
   plan's 2018–2022 baseline shaded, with or without crashes on I-290.
 
-Filters (year · who · what to count) apply across the page, map included;
-the full-screen map's extra filters narrow only the map. All of them live in the URL — including the
+Filters apply to everything on the page: year · who · what to count, plus
+**More filters** — weekday/weekend, time of day, street, primary cause and
+hit-and-run. (The twelve-year IDOT chart can't filter by street: IDOT's
+files have no street names.) Every filter lives in the URL — as does the
 full-screen map — so any view can be shared.
 
 ## Where the data comes from

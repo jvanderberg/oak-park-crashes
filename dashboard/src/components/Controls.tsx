@@ -1,3 +1,4 @@
+import { FilterChips, MoreFilters } from '@/components/Filters'
 import { ToggleGroup } from '@/components/ToggleGroup'
 import { useStore } from '@/lib/store'
 import {
@@ -11,7 +12,8 @@ import { useVillageView } from '@/lib/view'
 import type { ReactNode } from 'react'
 
 /** The one row of filters that drives every chart, table and the map.
- * The `map` variant is the same bar laid out atop the full-screen map. */
+ * The `map` variant is the same bar laid out atop the full-screen map,
+ * whose side panel carries the more-filters form instead of a popover. */
 export function Controls({
 	variant = 'page',
 	leading,
@@ -35,7 +37,7 @@ export function Controls({
 			}
 		>
 			{leading}
-			<Labeled label="Year">
+			<Labeled label="Year" compact={variant === 'map'}>
 				<ToggleGroup
 					ariaLabel="Year"
 					value={String(view.year)}
@@ -47,7 +49,7 @@ export function Controls({
 					}))}
 				/>
 			</Labeled>
-			<Labeled label="Who">
+			<Labeled label="Who" compact={variant === 'map'}>
 				<ToggleGroup<ModeFilter>
 					ariaLabel="Crash mode"
 					value={mode}
@@ -60,7 +62,7 @@ export function Controls({
 					]}
 				/>
 			</Labeled>
-			<Labeled label="Count">
+			<Labeled label="Count" compact={variant === 'map'}>
 				<ToggleGroup<Measure>
 					ariaLabel="What to count"
 					value={measure}
@@ -71,17 +73,30 @@ export function Controls({
 					}))}
 				/>
 			</Labeled>
+			{variant === 'page' && (
+				<>
+					<MoreFilters />
+					<FilterChips />
+				</>
+			)}
 		</div>
 	)
 }
 
+/** `compact` hides the visible label on phones (the switch's legend still
+ * names it for screen readers) so the full-screen bar's widest switch fits. */
 function Labeled({
 	label,
+	compact = false,
 	children,
-}: { label: string; children: React.ReactNode }) {
+}: { label: string; compact?: boolean; children: React.ReactNode }) {
 	return (
 		<div className="flex shrink-0 items-center gap-1.5">
-			<span className="text-xs font-medium text-muted-foreground">{label}</span>
+			<span
+				className={`text-xs font-medium text-muted-foreground ${compact ? 'max-sm:sr-only' : ''}`}
+			>
+				{label}
+			</span>
 			{children}
 		</div>
 	)

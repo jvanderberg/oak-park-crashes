@@ -1,14 +1,16 @@
-// Map-only filters: time of day, weekday/weekend, street, cause and
-// hit-and-run. The page's year / who / count filters apply first; these
-// narrow the map further. Pure functions, so the filtering is unit-tested
-// without a DOM.
+// The "more filters" row: weekday/weekend, time of day, street, primary
+// cause and hit-and-run. Like year and who, they apply to every number on
+// the page. Pure functions, so the filtering is unit-tested without a DOM.
 
-import type { Measure, VillageCrash } from './types'
+import type { Crash, Measure } from './types'
+
+/** Village crashes carry street names; IDOT's don't. */
+type Filterable = Crash & { street?: string; cross?: string | null }
 
 export type TimeOfDay = 'all' | 'morning' | 'midday' | 'evening' | 'night'
 export type DayKind = 'all' | 'weekday' | 'weekend'
 
-export interface MapFilters {
+export interface CrashFilters {
 	time: TimeOfDay
 	days: DayKind
 	/** Street name as normalized by the build (no N/S/E/W prefix). */
@@ -18,7 +20,7 @@ export interface MapFilters {
 	hitRun: boolean
 }
 
-export const DEFAULT_MAP_FILTERS: MapFilters = {
+export const DEFAULT_FILTERS: CrashFilters = {
 	time: 'all',
 	days: 'all',
 	street: null,
@@ -95,19 +97,21 @@ export function weekday(date: string): number {
 	return new Date(Date.UTC(y ?? 0, (m ?? 1) - 1, d ?? 1)).getUTCDay()
 }
 
-export function onStreet(c: VillageCrash, street: string): boolean {
+export function onStreet(c: Filterable, street: string): boolean {
 	return c.street === street || c.cross === street
 }
 
-/** Every filter except the named one — for faceted dropdown counts. */
-export function passesMapFilters(
-	c: VillageCrash,
-	f: MapFilters,
-	except?: 'street' | 'cause',
+/** Every filter except the named one (faceted dropdown counts; the IDOT
+ * chart, which has no street names, skips `street`). */
+export function passesFilters(
+	c: Filterable,
+	f: CrashFilters,
+	except?: keyof CrashFilters,
 ): boolean {
-	if (f.hitRun && !c.hitRun) return false
-	if (f.time !== 'all' && hourBucket(c.hour) !== f.time) return false
-	if (f.days !== 'all') {
+	if (except !== 'hitRun' && f.hitRun && !c.hitRun) return false
+	if (except !== 'time' && f.time !== 'all' && hourBucket(c.hour) !== f.time)
+		return false
+	if (except !== 'days' && f.days !== 'all') {
 		const wd = weekday(c.date)
 		const weekend = wd === 0 || wd === 6
 		if ((f.days === 'weekend') !== weekend) return false
@@ -120,12 +124,12 @@ export function passesMapFilters(
 }
 
 export interface ActiveFilter {
-	key: keyof MapFilters
+	key: keyof CrashFilters
 	label: string
 }
 
-/** Each active map filter in plain words, with the key that clears it. */
-export function describeMapFilters(f: MapFilters): ActiveFilter[] {
+/** Each active filter in plain words, with the key that clears it. */
+export function describeFilters(f: CrashFilters): ActiveFilter[] {
 	const out: ActiveFilter[] = []
 	if (f.days !== 'all') out.push({ key: 'days', label: DAY_LABEL[f.days] })
 	if (f.time !== 'all') out.push({ key: 'time', label: TIME_LABEL[f.time] })

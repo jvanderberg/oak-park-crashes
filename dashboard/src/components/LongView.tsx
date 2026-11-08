@@ -3,6 +3,7 @@ import { PLOT_CONFIG, Plot } from '@/components/Plot'
 import { ToggleGroup } from '@/components/ToggleGroup'
 import { type ChartLayout, baseLayout, resolveChartTheme } from '@/lib/colors'
 import { annualSeries, byMode } from '@/lib/crashes'
+import { passesFilters } from '@/lib/filters'
 import { fmtInt } from '@/lib/format'
 import { VISION_ZERO_BASELINE } from '@/lib/milestones'
 import { useStore } from '@/lib/store'
@@ -19,6 +20,7 @@ export function LongView() {
 	const measure = useStore((s) => s.measure)
 	const mode = useStore((s) => s.mode)
 	const interstate = useStore((s) => s.interstate)
+	const filters = useStore((s) => s.filters)
 	const setInterstate = useStore((s) => s.setInterstate)
 	useStore((s) => s.theme)
 	const narrow = useNarrow()
@@ -28,7 +30,10 @@ export function LongView() {
 		const years = manifest.sources.idot.years.map((y) => y.year)
 		const scoped =
 			interstate === 'excl' ? idot.filter((c) => !c.interstate) : idot
-		const filtered = byMode(scoped, mode)
+		// IDOT's files have no street names, so the street filter can't apply.
+		const filtered = byMode(scoped, mode).filter((c) =>
+			passesFilters(c, filters, 'street'),
+		)
 		const series = annualSeries(filtered, measure, years)
 		const i290 = idot.filter((c) => c.interstate)
 		return {
@@ -36,7 +41,7 @@ export function LongView() {
 			series,
 			i290Share: idot.length ? i290.length / idot.length : 0,
 		}
-	}, [idot, manifest, measure, mode, interstate])
+	}, [idot, manifest, measure, mode, interstate, filters])
 
 	if (!view) {
 		return (
@@ -148,6 +153,12 @@ export function LongView() {
 			}
 			caption={
 				<>
+					{filters.street && (
+						<strong className="font-medium text-foreground">
+							Not filtered to {filters.street}: IDOT’s files have no street
+							names.{' '}
+						</strong>
+					)}
 					{baselineAvg !== null &&
 						`${VISION_ZERO_BASELINE.from}–${VISION_ZERO_BASELINE.to} averaged ${fmtInt(baselineAvg)} a year. `}
 					{newest} is faded: IDOT’s newest file may still change. IDOT counts

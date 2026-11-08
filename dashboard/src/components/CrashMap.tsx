@@ -8,8 +8,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { resolveChartTheme } from '@/lib/colors'
 import { weight } from '@/lib/crashes'
+import { MAP_NOUN } from '@/lib/filters'
 import { fmtDate, fmtHour, fmtInt } from '@/lib/format'
-import { MAP_NOUN, passesMapFilters, tally } from '@/lib/mapFilters'
 import { useStore } from '@/lib/store'
 import {
 	MODE_LABEL,
@@ -89,7 +89,6 @@ export function CrashMap() {
 	const crashId = useStore((s) => s.crash)
 	const setCrash = useStore((s) => s.setCrash)
 	const mapFull = useStore((s) => s.mapFull)
-	const mapFilters = useStore((s) => s.mapFilters)
 	const openMapFull = useStore((s) => s.openMapFull)
 	const closeMapFull = useStore((s) => s.closeMapFull)
 	const measure = useStore((s) => s.measure)
@@ -108,14 +107,11 @@ export function CrashMap() {
 	// renders its skeleton), so map creation keys off this.
 	const hasView = view !== null
 
-	// Crashes under the page's filters (year, who, count), then the map's.
-	const pageCrashes = useMemo(
-		() => view?.crashes.filter((c) => weight(c, measure) > 0),
-		[view, measure],
-	)
+	// Crashes under every page filter (the view applies the more-filters),
+	// limited to what "Count" counts.
 	const shown = useMemo(
-		() => (pageCrashes ?? []).filter((c) => passesMapFilters(c, mapFilters)),
-		[pageCrashes, mapFilters],
+		() => (view?.crashes ?? []).filter((c) => weight(c, measure) > 0),
+		[view, measure],
 	)
 	const points = useMemo(
 		() =>
@@ -123,26 +119,6 @@ export function CrashMap() {
 				.filter((c) => c.lat !== null && c.lon !== null)
 				.sort((a, b) => DRAW_ORDER[a.sev] - DRAW_ORDER[b.sev]),
 		[shown],
-	)
-	// Dropdown counts honor every other filter, so "Madison St (41)" means
-	// picking it shows 41 dots.
-	const streets = useMemo(
-		() =>
-			tally(
-				(pageCrashes ?? [])
-					.filter((c) => passesMapFilters(c, mapFilters, 'street'))
-					.flatMap((c) => (c.cross ? [c.street, c.cross] : [c.street])),
-			),
-		[pageCrashes, mapFilters],
-	)
-	const causes = useMemo(
-		() =>
-			tally(
-				(pageCrashes ?? [])
-					.filter((c) => passesMapFilters(c, mapFilters, 'cause'))
-					.map((c) => c.cause1),
-			),
-		[pageCrashes, mapFilters],
 	)
 
 	const selected = useMemo(
@@ -387,7 +363,7 @@ export function CrashMap() {
 					variant="outline"
 					size="sm"
 					onClick={openMapFull}
-					aria-label="Open the map full screen, with more filters"
+					aria-label="Open the map full screen"
 				>
 					<Maximize2 aria-hidden />
 					Full screen
@@ -458,8 +434,6 @@ export function CrashMap() {
 								count={points.length}
 								countLabel={countLabel}
 								span={spanText}
-								streets={streets}
-								causes={causes}
 								swatches={t.mode}
 								measure={measure}
 								defaultOpen={!narrow}

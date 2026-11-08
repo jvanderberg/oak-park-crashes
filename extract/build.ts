@@ -224,8 +224,13 @@ function buildVillage(books: Codebooks) {
 	const cause = (v: Cell) => {
 		const k = codeKey(v)
 		if (k === null) return null
-		// Village's own lookup first, IDOT's code table as fallback.
-		return note(causeByCode.get(k) ?? decode(books.cause, k), 'cause')
+		// IDOT's code table first, so both sources name every cause the
+		// same way (the Village's own lookup truncates long names at 45
+		// characters); the Village lookup covers codes IDOT never labels.
+		return note(
+			books.cause[k] ?? causeByCode.get(k) ?? decode(books.cause, k),
+			'cause',
+		)
 	}
 
 	const records: VillageCrash[] = rowsAsObjects(fact).map((r) => {

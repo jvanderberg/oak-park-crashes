@@ -1,5 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { type Comparison, compare } from '@/lib/crashes'
+import { describeFilters } from '@/lib/filters'
 import { fmtInt, fmtPct } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import { MODE_LABEL, type Measure } from '@/lib/types'
@@ -30,6 +31,7 @@ export function Kpis() {
 	const view = useVillageView()
 	const mode = useStore((s) => s.mode)
 	const measure = useStore((s) => s.measure)
+	const filters = useStore((s) => s.filters)
 
 	const rows = useMemo(() => {
 		if (!view) return null
@@ -55,8 +57,13 @@ export function Kpis() {
 	}
 
 	const span = periodSpan(view.period, view.lastDate)
-	const who =
-		mode === 'all' ? '' : ` · ${MODE_LABEL[mode].toLowerCase()} crashes`
+	const who = [
+		mode === 'all' ? null : `${MODE_LABEL[mode].toLowerCase()} crashes`,
+		...describeFilters(filters).map((a) => a.label),
+	]
+		.filter(Boolean)
+		.map((s) => ` · ${s}`)
+		.join('')
 
 	return (
 		<section aria-label="Headline numbers">

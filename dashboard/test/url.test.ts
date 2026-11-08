@@ -34,7 +34,7 @@ describe('url state', () => {
 			crash: '31337',
 			theme: 'dark',
 			mapFull: true,
-			mapFilters: {
+			filters: {
 				time: 'evening',
 				days: 'weekend',
 				street: 'Madison St',
@@ -49,6 +49,6 @@ describe('url state', () => {
 			`?map=yes&tod=lunch&days=sunday&hr=yes&street=${'x'.repeat(81)}`,
 		)
 		expect(s.mapFull).toBe(false)
-		expect(s.mapFilters).toEqual(DEFAULT_URL_STATE.mapFilters)
+		expect(s.filters).toEqual(DEFAULT_URL_STATE.filters)
 	})
 })

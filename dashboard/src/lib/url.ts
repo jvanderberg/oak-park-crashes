@@ -3,12 +3,7 @@
 // clean links stay short. Pure string-in/string-out helpers live here so they
 // can be unit-tested without a DOM.
 
-import {
-	DAY_KINDS,
-	DEFAULT_MAP_FILTERS,
-	type MapFilters,
-	TIMES,
-} from './mapFilters'
+import { type CrashFilters, DAY_KINDS, DEFAULT_FILTERS, TIMES } from './filters'
 import type { Measure, ModeFilter } from './types'
 
 export type Theme = 'light' | 'dark'
@@ -26,8 +21,8 @@ export interface UrlState {
 	theme: Theme | null
 	/** Map popped out to full screen. */
 	mapFull: boolean
-	/** Map-only filters. */
-	mapFilters: MapFilters
+	/** The "More filters" set (days, time, street, cause, hit-and-run). */
+	filters: CrashFilters
 }
 
 export const DEFAULT_URL_STATE: UrlState = {
@@ -38,7 +33,7 @@ export const DEFAULT_URL_STATE: UrlState = {
 	crash: null,
 	theme: null,
 	mapFull: false,
-	mapFilters: DEFAULT_MAP_FILTERS,
+	filters: DEFAULT_FILTERS,
 }
 
 const MEASURES: readonly Measure[] = ['crashes', 'injury', 'ksi', 'people']
@@ -74,9 +69,9 @@ export function parseUrl(search: string): UrlState {
 		crash: crash && /^[\w-]{1,32}$/.test(crash) ? crash : null,
 		theme: theme === 'light' || theme === 'dark' ? theme : null,
 		mapFull: p.get('map') === 'full',
-		mapFilters: {
-			time: oneOf(p.get('tod'), TIMES, DEFAULT_MAP_FILTERS.time),
-			days: oneOf(p.get('days'), DAY_KINDS, DEFAULT_MAP_FILTERS.days),
+		filters: {
+			time: oneOf(p.get('tod'), TIMES, DEFAULT_FILTERS.time),
+			days: oneOf(p.get('days'), DAY_KINDS, DEFAULT_FILTERS.days),
 			street: text(p.get('street')),
 			cause: text(p.get('cause')),
 			hitRun: p.get('hr') === '1',
@@ -99,7 +94,7 @@ export function serializeUrl(
 	if (state.crash) p.set('crash', state.crash)
 	if (state.theme && state.theme !== systemTheme) p.set('theme', state.theme)
 	if (state.mapFull) p.set('map', 'full')
-	const f = state.mapFilters
+	const f = state.filters
 	if (f.time !== 'all') p.set('tod', f.time)
 	if (f.days !== 'all') p.set('days', f.days)
 	if (f.street) p.set('street', f.street)
