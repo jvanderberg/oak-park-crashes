@@ -134,9 +134,9 @@ function RankTable({
 						</th>
 						<th
 							className="px-2 py-1 text-right font-medium"
-							title="Fatal or serious-injury crashes"
+							title="Crashes that killed or seriously injured someone"
 						>
-							KSI
+							Fatal or serious
 						</th>
 						<th
 							className="px-2 py-1 text-right font-medium"

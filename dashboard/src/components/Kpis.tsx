@@ -12,12 +12,12 @@ const CARDS: Array<{ measure: Measure; label: string; hint: string }> = [
 	{
 		measure: 'injury',
 		label: 'Injury crashes',
-		hint: 'someone was hurt (K, A, B or C)',
+		hint: 'someone was hurt, even slightly',
 	},
 	{
 		measure: 'ksi',
 		label: 'Fatal & serious-injury crashes',
-		hint: 'someone was killed or incapacitated (K or A)',
+		hint: 'someone was killed or badly hurt',
 	},
 	{
 		measure: 'people',

@@ -9,8 +9,8 @@ getting better. The data refreshes automatically every day.
 
 ## What's in the dashboard
 
-- **Headline numbers** — crashes, injury crashes, fatal & serious-injury
-  (KSI) crashes, and people hurt, each compared with *the same dates a year
+- **Headline numbers** — crashes, injury crashes, crashes that killed or
+  seriously injured someone, and people hurt, each compared with *the same dates a year
   earlier* (so a year in progress is never compared with a whole year).
 - **Who gets hurt** — the share of harm by who was involved (vehicles only,
   pedestrian, bicycle) and how often each kind of crash injures someone.

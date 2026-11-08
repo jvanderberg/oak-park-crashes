@@ -12,9 +12,9 @@ export const MODE_LABEL: Record<Mode, string> = {
 
 export const SEVERITY_LABEL: Record<Severity, string> = {
 	K: 'Fatal',
-	A: 'Serious injury (A)',
-	B: 'Minor injury (B)',
-	C: 'Possible injury (C)',
+	A: 'Serious injury',
+	B: 'Minor injury',
+	C: 'Possible injury (complaint of pain)',
 	O: 'No injury',
 	U: 'Unknown',
 }
