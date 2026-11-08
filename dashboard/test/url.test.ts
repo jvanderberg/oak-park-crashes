@@ -35,7 +35,6 @@ describe('url state', () => {
 			theme: 'dark',
 			mapFull: true,
 			mapFilters: {
-				show: 'ksi',
 				time: 'evening',
 				days: 'weekend',
 				street: 'Madison St',

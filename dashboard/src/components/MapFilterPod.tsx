@@ -6,7 +6,6 @@ import {
 	DAY_KINDS,
 	DAY_LABEL,
 	type DayKind,
-	type MapShow,
 	SIZE_KEY,
 	TIMES,
 	TIME_LABEL,
@@ -14,17 +13,24 @@ import {
 	describeMapFilters,
 } from '@/lib/mapFilters'
 import { useStore } from '@/lib/store'
-import { MODES, MODE_LABEL, type Mode } from '@/lib/types'
-import { ChevronDown, SlidersHorizontal } from 'lucide-react'
+import {
+	MEASURE_SHORT,
+	MODES,
+	MODE_LABEL,
+	type Measure,
+	type Mode,
+} from '@/lib/types'
+import type { VillageView } from '@/lib/view'
+import { ChevronDown, SlidersHorizontal, X } from 'lucide-react'
 import { type ReactNode, useId, useState } from 'react'
 
 /** Mode swatches + dot-size key, shared by the card and the pop-out. */
 export function MapLegend({
 	swatches,
-	show,
+	measure,
 }: {
 	swatches: Record<Mode, string>
-	show: MapShow
+	measure: Measure
 }) {
 	return (
 		<div className="flex flex-wrap items-center gap-x-6 gap-y-1">
@@ -37,7 +43,7 @@ export function MapLegend({
 			/>
 			<span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
 				Size:
-				{SIZE_KEY[show].map(([r, label]) => (
+				{SIZE_KEY[measure].map(([r, label]) => (
 					<span key={label} className="flex items-center gap-1">
 						<span
 							className="inline-block rounded-full bg-muted-foreground"
@@ -52,8 +58,63 @@ export function MapLegend({
 	)
 }
 
-/** Floating panel of map-only filters for the full-screen map (year, who
- * and show live in the bar across the top). */
+/** Every filter shaping the map, inline under its title: the page's
+ * year / who / count (changed in the bar at the top) and any map-only
+ * filters, each removable. */
+export function AppliedFilters({ view }: { view: VillageView }) {
+	const mode = useStore((s) => s.mode)
+	const measure = useStore((s) => s.measure)
+	const f = useStore((s) => s.mapFilters)
+	const clear = useStore((s) => s.clearMapFilter)
+	const reset = useStore((s) => s.resetMapFilters)
+	const latest = view.years.at(-1)
+	const page = [
+		view.year === latest && view.period.partial
+			? `${view.year} to date`
+			: String(view.year),
+		mode === 'all' ? 'Everyone' : MODE_LABEL[mode],
+		MEASURE_SHORT[measure],
+	]
+	const active = describeMapFilters(f)
+	return (
+		<div className="flex flex-wrap items-center gap-1.5 text-xs">
+			<span className="font-medium text-muted-foreground">Filters:</span>
+			{page.map((label) => (
+				<span key={label} className="rounded-full bg-muted px-2 py-0.5">
+					{label}
+				</span>
+			))}
+			{active.map((a) => (
+				<span
+					key={a.key}
+					className="inline-flex items-center gap-0.5 rounded-full border border-primary/40 bg-primary/10 py-0.5 pl-2 pr-1"
+				>
+					{a.label}
+					<button
+						type="button"
+						className="rounded-full p-0.5 hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+						aria-label={`Remove filter: ${a.label}`}
+						onClick={() => clear(a.key)}
+					>
+						<X className="size-3" aria-hidden />
+					</button>
+				</span>
+			))}
+			{active.length > 1 && (
+				<button
+					type="button"
+					className="ml-1 font-medium text-primary underline underline-offset-2"
+					onClick={reset}
+				>
+					Clear map filters
+				</button>
+			)}
+		</div>
+	)
+}
+
+/** Floating panel of map-only filters for the full-screen map (the page's
+ * year / who / count live in the bar across the top). */
 export function MapFilterPod({
 	count,
 	countLabel,
@@ -61,6 +122,7 @@ export function MapFilterPod({
 	streets,
 	causes,
 	swatches,
+	measure,
 	defaultOpen,
 }: {
 	count: number
@@ -69,6 +131,7 @@ export function MapFilterPod({
 	streets: Array<[string, number]>
 	causes: Array<[string, number]>
 	swatches: Record<Mode, string>
+	measure: Measure
 	defaultOpen: boolean
 }) {
 	const [open, setOpen] = useState(defaultOpen)
@@ -93,7 +156,7 @@ export function MapFilterPod({
 					</span>
 					<span className="block truncate text-xs text-muted-foreground">
 						{span}
-						{active.length > 0 ? ` · ${active.join(' · ')}` : ''}
+						{active.map((a) => ` · ${a.label}`).join('')}
 					</span>
 				</span>
 				<span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">
@@ -162,7 +225,7 @@ export function MapFilterPod({
 						</Button>
 					)}
 					<div className="border-t border-border pt-2.5">
-						<MapLegend swatches={swatches} show={f.show} />
+						<MapLegend swatches={swatches} measure={measure} />
 					</div>
 				</div>
 			)}

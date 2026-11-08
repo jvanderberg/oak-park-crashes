@@ -1,18 +1,15 @@
 import { ChartCard } from '@/components/ChartCard'
 import { Controls } from '@/components/Controls'
-import { MapFilterPod, MapLegend } from '@/components/MapFilterPod'
-import { ToggleGroup } from '@/components/ToggleGroup'
+import {
+	AppliedFilters,
+	MapFilterPod,
+	MapLegend,
+} from '@/components/MapFilterPod'
 import { Button } from '@/components/ui/button'
 import { resolveChartTheme } from '@/lib/colors'
+import { weight } from '@/lib/crashes'
 import { fmtDate, fmtHour, fmtInt } from '@/lib/format'
-import {
-	type MapShow,
-	SHOW_NOUN,
-	SHOW_OPTIONS,
-	describeMapFilters,
-	passesMapFilters,
-	tally,
-} from '@/lib/mapFilters'
+import { MAP_NOUN, passesMapFilters, tally } from '@/lib/mapFilters'
 import { useStore } from '@/lib/store'
 import {
 	MODE_LABEL,
@@ -95,8 +92,7 @@ export function CrashMap() {
 	const mapFilters = useStore((s) => s.mapFilters)
 	const openMapFull = useStore((s) => s.openMapFull)
 	const closeMapFull = useStore((s) => s.closeMapFull)
-	const resetMapFilters = useStore((s) => s.resetMapFilters)
-	const setMapFilters = useStore((s) => s.setMapFilters)
+	const measure = useStore((s) => s.measure)
 	const narrow = useNarrow()
 
 	const el = useRef<HTMLDivElement | null>(null)
@@ -112,8 +108,11 @@ export function CrashMap() {
 	// renders its skeleton), so map creation keys off this.
 	const hasView = view !== null
 
-	// Crashes under the page's year and who filters, then the map's own.
-	const pageCrashes = view?.crashes
+	// Crashes under the page's filters (year, who, count), then the map's.
+	const pageCrashes = useMemo(
+		() => view?.crashes.filter((c) => weight(c, measure) > 0),
+		[view, measure],
+	)
 	const shown = useMemo(
 		() => (pageCrashes ?? []).filter((c) => passesMapFilters(c, mapFilters)),
 		[pageCrashes, mapFilters],
@@ -373,8 +372,7 @@ export function CrashMap() {
 	const t = resolveChartTheme()
 	const span = periodSpan(view.period, view.lastDate)
 	const unplaced = shown.length - points.length
-	const active = describeMapFilters(mapFilters)
-	const countLabel = SHOW_NOUN[mapFilters.show]
+	const countLabel = MAP_NOUN[measure]
 	const title = `Where ${countLabel} happened`
 	const spanText = `${span}${view.period.partial ? `, ${view.year}` : ''}`
 
@@ -384,45 +382,27 @@ export function CrashMap() {
 			title={title}
 			subtitle={`${fmtInt(points.length)} ${countLabel}, ${spanText} · click a dot for details`}
 			controls={
-				<>
-					<ToggleGroup<MapShow>
-						ariaLabel="Which crashes the map shows"
-						value={mapFilters.show}
-						onChange={(show) => setMapFilters({ show })}
-						options={SHOW_OPTIONS}
-					/>
-					<Button
-						ref={expandBtn}
-						variant="outline"
-						size="sm"
-						onClick={openMapFull}
-						aria-label="Open the map full screen, with more filters"
-					>
-						<Maximize2 aria-hidden />
-						Full screen
-					</Button>
-				</>
+				<Button
+					ref={expandBtn}
+					variant="outline"
+					size="sm"
+					onClick={openMapFull}
+					aria-label="Open the map full screen, with more filters"
+				>
+					<Maximize2 aria-hidden />
+					Full screen
+				</Button>
 			}
-			legend={<MapLegend swatches={t.mode} show={mapFilters.show} />}
+			legend={
+				<div className="space-y-1.5">
+					<AppliedFilters view={view} />
+					<MapLegend swatches={t.mode} measure={measure} />
+				</div>
+			}
 			caption={
-				active.length > 0 || unplaced > 0 ? (
-					<>
-						{active.length > 0 && (
-							<>
-								Map filtered to: {active.join(' · ')}.{' '}
-								<button
-									type="button"
-									className="font-medium text-primary underline underline-offset-2"
-									onClick={resetMapFilters}
-								>
-									Clear
-								</button>{' '}
-							</>
-						)}
-						{unplaced > 0 &&
-							`${fmtInt(unplaced)} crash${unplaced === 1 ? '' : 'es'} in this view had no usable location and ${unplaced === 1 ? 'is' : 'are'} not drawn.`}
-					</>
-				) : undefined
+				unplaced > 0
+					? `${fmtInt(unplaced)} crash${unplaced === 1 ? '' : 'es'} in this view had no usable location and ${unplaced === 1 ? 'is' : 'are'} not drawn.`
+					: undefined
 			}
 		>
 			{/* Keeps the card's height while the map is popped out. */}
@@ -450,15 +430,26 @@ export function CrashMap() {
 									aria-label="Back to dashboard"
 								>
 									<ArrowLeft aria-hidden />
-									Back<span className="hidden sm:inline">to dashboard</span>
+									<span>
+										Back<span className="hidden sm:inline"> to dashboard</span>
+									</span>
 								</Button>
 							}
 						/>
 					)}
-					<div className={mapFull ? 'relative min-h-0 flex-1' : 'h-full'}>
+					<div
+						className={
+							mapFull
+								? 'relative min-h-0 flex-1'
+								: 'h-full overflow-hidden rounded-md border border-border'
+						}
+					>
+						{/* Constant className: Leaflet adds its own classes to this
+						    node, and a React re-render with a new class string would
+						    wipe them. */}
 						<div
 							ref={el}
-							className={`isolate h-full w-full overflow-hidden ${mapFull ? '' : 'rounded-md border border-border'}`}
+							className="isolate h-full w-full"
 							role="region"
 							aria-label="Map of crash locations"
 						/>
@@ -470,6 +461,7 @@ export function CrashMap() {
 								streets={streets}
 								causes={causes}
 								swatches={t.mode}
+								measure={measure}
 								defaultOpen={!narrow}
 							/>
 						)}

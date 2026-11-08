@@ -68,6 +68,7 @@ interface AppState {
 	toggleTheme: () => void
 	setMapFilters: (patch: Partial<MapFilters>) => void
 	resetMapFilters: () => void
+	clearMapFilter: (key: keyof MapFilters) => void
 	openMapFull: () => void
 	closeMapFull: () => void
 	/** Browser Back/Forward: adopt the entry's pop-out state, then rewrite
@@ -150,10 +151,10 @@ export const useStore = create<AppState>((set, get) => ({
 		}),
 	setMapFilters: (patch) =>
 		set((s) => ({ mapFilters: { ...s.mapFilters, ...patch } })),
-	// "Show" is the map's headline choice, not a narrowing filter: keep it.
-	resetMapFilters: () =>
+	resetMapFilters: () => set({ mapFilters: DEFAULT_MAP_FILTERS }),
+	clearMapFilter: (key) =>
 		set((s) => ({
-			mapFilters: { ...DEFAULT_MAP_FILTERS, show: s.mapFilters.show },
+			mapFilters: { ...s.mapFilters, [key]: DEFAULT_MAP_FILTERS[key] },
 		})),
 	openMapFull: () => {
 		if (get().mapFull) return

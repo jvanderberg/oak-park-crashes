@@ -118,6 +118,14 @@ export const MEASURE_LABEL: Record<Measure, string> = {
 	people: 'People hurt',
 }
 
+/** Short labels for the Count switch and filter chips. */
+export const MEASURE_SHORT: Record<Measure, string> = {
+	crashes: 'All crashes',
+	injury: 'Injury crashes',
+	ksi: 'Fatal + serious',
+	people: 'People hurt',
+}
+
 export type ModeFilter = 'all' | Mode
 
 type LonLat = [number, number]

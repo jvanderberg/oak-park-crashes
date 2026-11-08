@@ -7,7 +7,6 @@ import {
 	DAY_KINDS,
 	DEFAULT_MAP_FILTERS,
 	type MapFilters,
-	SHOWS,
 	TIMES,
 } from './mapFilters'
 import type { Measure, ModeFilter } from './types'
@@ -76,7 +75,6 @@ export function parseUrl(search: string): UrlState {
 		theme: theme === 'light' || theme === 'dark' ? theme : null,
 		mapFull: p.get('map') === 'full',
 		mapFilters: {
-			show: oneOf(p.get('show'), SHOWS, DEFAULT_MAP_FILTERS.show),
 			time: oneOf(p.get('tod'), TIMES, DEFAULT_MAP_FILTERS.time),
 			days: oneOf(p.get('days'), DAY_KINDS, DEFAULT_MAP_FILTERS.days),
 			street: text(p.get('street')),
@@ -102,7 +100,6 @@ export function serializeUrl(
 	if (state.theme && state.theme !== systemTheme) p.set('theme', state.theme)
 	if (state.mapFull) p.set('map', 'full')
 	const f = state.mapFilters
-	if (f.show !== DEFAULT_MAP_FILTERS.show) p.set('show', f.show)
 	if (f.time !== 'all') p.set('tod', f.time)
 	if (f.days !== 'all') p.set('days', f.days)
 	if (f.street) p.set('street', f.street)

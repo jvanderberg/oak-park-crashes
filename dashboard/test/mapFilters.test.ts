@@ -90,8 +90,8 @@ describe('map filters', () => {
 	it('describes active filters in plain words', () => {
 		expect(describeMapFilters(DEFAULT_MAP_FILTERS)).toEqual([])
 		expect(describeMapFilters(f({ street: 'Lake St', hitRun: true }))).toEqual([
-			'on Lake St',
-			'hit and run',
+			{ key: 'street', label: 'On Lake St' },
+			{ key: 'hitRun', label: 'Hit and run' },
 		])
 	})
 	it('tallies most common first, ignoring blanks', () => {

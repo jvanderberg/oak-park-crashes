@@ -1,18 +1,14 @@
-// Filters for the crash map: which crashes to show (all / injury / fatal or
-// serious), time of day, weekday/weekend, street, cause and hit-and-run.
-// They narrow only the map; the page's year and who filters still apply.
-// Pure functions, so the filtering is unit-tested without a DOM.
+// Map-only filters: time of day, weekday/weekend, street, cause and
+// hit-and-run. The page's year / who / count filters apply first; these
+// narrow the map further. Pure functions, so the filtering is unit-tested
+// without a DOM.
 
-import { isInjury, isKsi } from './crashes'
-import type { VillageCrash } from './types'
-
-export type MapShow = 'crashes' | 'injury' | 'ksi'
+import type { Measure, VillageCrash } from './types'
 
 export type TimeOfDay = 'all' | 'morning' | 'midday' | 'evening' | 'night'
 export type DayKind = 'all' | 'weekday' | 'weekend'
 
 export interface MapFilters {
-	show: MapShow
 	time: TimeOfDay
 	days: DayKind
 	/** Street name as normalized by the build (no N/S/E/W prefix). */
@@ -23,7 +19,6 @@ export interface MapFilters {
 }
 
 export const DEFAULT_MAP_FILTERS: MapFilters = {
-	show: 'injury',
 	time: 'all',
 	days: 'all',
 	street: null,
@@ -31,29 +26,27 @@ export const DEFAULT_MAP_FILTERS: MapFilters = {
 	hitRun: false,
 }
 
-export const SHOWS: readonly MapShow[] = ['crashes', 'injury', 'ksi']
-
-/** "Where {noun} happened" / "232 {noun}". */
-export const SHOW_NOUN: Record<MapShow, string> = {
+/** What the map's dots are, per page measure — "Where {noun} happened".
+ * "People hurt" draws the crashes that hurt someone. */
+export const MAP_NOUN: Record<Measure, string> = {
 	crashes: 'crashes',
 	injury: 'injury crashes',
 	ksi: 'fatal & serious-injury crashes',
+	people: 'crashes that hurt someone',
 }
 
-export const SHOW_OPTIONS: Array<{ value: MapShow; label: string }> = [
-	{ value: 'crashes', label: 'All crashes' },
-	{ value: 'injury', label: 'Injury crashes' },
-	{ value: 'ksi', label: 'Fatal + serious' },
-]
-
 /** Dot-size key for what's on the map (radii match the markers). */
-export const SIZE_KEY: Record<MapShow, Array<[number, string]>> = {
+export const SIZE_KEY: Record<Measure, Array<[number, string]>> = {
 	crashes: [
 		[3, 'no injury'],
 		[5, 'injury'],
 		[8, 'fatal or serious'],
 	],
 	injury: [
+		[5, 'minor or possible injury'],
+		[8, 'fatal or serious'],
+	],
+	people: [
 		[5, 'minor or possible injury'],
 		[8, 'fatal or serious'],
 	],
@@ -112,8 +105,6 @@ export function passesMapFilters(
 	f: MapFilters,
 	except?: 'street' | 'cause',
 ): boolean {
-	if (f.show === 'injury' && !isInjury(c)) return false
-	if (f.show === 'ksi' && !isKsi(c)) return false
 	if (f.hitRun && !c.hitRun) return false
 	if (f.time !== 'all' && hourBucket(c.hour) !== f.time) return false
 	if (f.days !== 'all') {
@@ -128,15 +119,19 @@ export function passesMapFilters(
 	return true
 }
 
-/** Plain-language description of each active narrowing filter (beyond
- * "show", which the map's title states), for chips/captions. */
-export function describeMapFilters(f: MapFilters): string[] {
-	const out: string[] = []
-	if (f.time !== 'all') out.push(TIME_LABEL[f.time])
-	if (f.days !== 'all') out.push(DAY_LABEL[f.days])
-	if (f.street) out.push(`on ${f.street}`)
-	if (f.cause) out.push(f.cause)
-	if (f.hitRun) out.push('hit and run')
+export interface ActiveFilter {
+	key: keyof MapFilters
+	label: string
+}
+
+/** Each active map filter in plain words, with the key that clears it. */
+export function describeMapFilters(f: MapFilters): ActiveFilter[] {
+	const out: ActiveFilter[] = []
+	if (f.days !== 'all') out.push({ key: 'days', label: DAY_LABEL[f.days] })
+	if (f.time !== 'all') out.push({ key: 'time', label: TIME_LABEL[f.time] })
+	if (f.street) out.push({ key: 'street', label: `On ${f.street}` })
+	if (f.cause) out.push({ key: 'cause', label: f.cause })
+	if (f.hitRun) out.push({ key: 'hitRun', label: 'Hit and run' })
 	return out
 }
 
