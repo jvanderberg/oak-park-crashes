@@ -1,8 +1,8 @@
 {
 "source": "Village of Oak Park — Traffic Crash Dashboard (Power BI)",
 "url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
-"fetchedAt": "2026-11-10T11:26:55.008Z",
-"sourceUpdatedAt": "2026-11-09T13:06:16.057Z",
+"fetchedAt": "2026-11-11T11:26:27.673Z",
+"sourceUpdatedAt": "2026-11-10T13:06:32.940Z",
 "query": "SELECT [Contributing Factor Code1], [Contributing Factor1] FROM [DimContribFactor1] (model 1737776)",
 "columns": ["Contributing Factor Code1","Contributing Factor1"],
 "rows": [
