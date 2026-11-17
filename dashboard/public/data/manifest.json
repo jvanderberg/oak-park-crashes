@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-11-16T11:31:11.528Z",
+  "generatedAt": "2026-11-17T11:27:06.466Z",
   "sources": {
     "village": {
       "title": "Village of Oak Park — Traffic Crash Dashboard",
       "url": "https://opendata.oak-park.us/TrafficCrash",
       "apiUrl": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
       "description": "Every crash on a public roadway inside the Village reported to the Oak Park Police Department since 1 Jan 2024, from the Power BI model behind the Village dashboard. Posted about a week after each crash.",
-      "sourceUpdatedAt": "2026-11-15T13:08:35.247Z",
-      "fetchedAt": "2026-11-16T11:31:06.154Z",
-      "rows": 4980,
+      "sourceUpdatedAt": "2026-11-16T13:06:23.020Z",
+      "fetchedAt": "2026-11-17T11:26:54.243Z",
+      "rows": 4984,
       "firstDate": "2024-01-01",
-      "lastDate": "2026-11-07"
+      "lastDate": "2026-11-08"
     },
     "idot": {
       "title": "Illinois Department of Transportation — statewide crash data",
@@ -103,7 +103,7 @@
           "layer": "CRASHES__2024",
           "rows": 1423,
           "sourceUpdatedAt": "2026-07-09T19:01:49.751Z",
-          "fetchedAt": "2026-11-16T11:31:09.293Z"
+          "fetchedAt": "2026-11-17T11:27:00.371Z"
         },
         {
           "year": 2025,
@@ -111,7 +111,7 @@
           "layer": "CRASHES___2025",
           "rows": 1369,
           "sourceUpdatedAt": "2026-07-22T14:33:49.382Z",
-          "fetchedAt": "2026-11-16T11:31:10.395Z"
+          "fetchedAt": "2026-11-17T11:27:05.321Z"
         }
       ]
     },
@@ -170,8 +170,8 @@
     {
       "year": 2026,
       "severity": "Property Damage",
-      "published": 1300,
-      "derived": 1300
+      "published": 1304,
+      "derived": 1304
     }
   ],
   "crossSource": {
@@ -190,7 +190,7 @@
     "The two sources count different things and are never added together. Village data: every Oak Park PD report since 2024, including minor crashes, but not crashes worked by the State Police on I-290. IDOT data: all agencies including I-290, but only crashes above IDOT’s reporting threshold, and finalized months after year-end.",
     "Counts are crashes, not people: a crash that injured three people counts once in crash totals. People-injured totals (K/A/B/C counts) are shown separately where labelled.",
     "“Pedestrian” and “bicycle” crashes are classified by the crash’s first harmful event (IDOT “Type of First Crash”). A crash that began as a collision between vehicles and then struck a pedestrian is counted as a vehicle crash.",
-    "18 of 4980 Village crashes have no usable coordinates and are left off the map (they still count in every total).",
+    "19 of 4984 Village crashes have no usable coordinates and are left off the map (they still count in every total).",
     "156 of 17098 IDOT crashes have no usable coordinates.",
     "IDOT’s 2014–2017 files record longitude without its minus sign (6165 crashes); the sign is restored here.",
     "2 separate Village crashes (different times and places) share a police report number. They are counted as separate crashes, as the Village dashboard also does.",

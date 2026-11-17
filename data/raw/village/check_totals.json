@@ -1,8 +1,8 @@
 {
 "source": "Village of Oak Park — Traffic Crash Dashboard (Power BI), published measures",
 "url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
-"fetchedAt": "2026-11-16T11:31:08.354Z",
-"sourceUpdatedAt": "2026-11-15T13:08:35.247Z",
+"fetchedAt": "2026-11-17T11:26:55.780Z",
+"sourceUpdatedAt": "2026-11-16T13:06:23.020Z",
 "query": "SELECT [DIM Calendar].[Year], [FactAccidents].[CrashSeverity], [Total Accidents], [Total Injured], [Total Fatals]",
 "columns": ["Year","CrashSeverity","Total Accidents","Total Injured","Total Fatals"],
 "rows": [
@@ -13,6 +13,6 @@
 [2025,"Property Damage",1501,0,0],
 [2026,"Fatal",1,1,1],
 [2026,"Injury",239,282,0],
-[2026,"Property Damage",1300,0,0]
+[2026,"Property Damage",1304,0,0]
 ]
 }
