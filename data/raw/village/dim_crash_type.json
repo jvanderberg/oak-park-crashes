@@ -1,8 +1,8 @@
 {
 "source": "Village of Oak Park — Traffic Crash Dashboard (Power BI)",
 "url": "https://app.powerbigov.us/view?r=eyJrIjoiMGVkYjlkYzktMDU4ZS00MDFiLThjYjgtZmFjN2JlZjIzYzAyIiwidCI6IjZjOGIyOTRlLTVmZjUtNDJiMi1hM2Q3LWMzYmQ3MGE3OWYyNSJ9",
-"fetchedAt": "2026-11-26T11:26:55.565Z",
-"sourceUpdatedAt": "2026-11-25T13:06:21.200Z",
+"fetchedAt": "2026-11-27T11:27:01.363Z",
+"sourceUpdatedAt": "2026-11-26T13:06:48.790Z",
 "query": "SELECT [Crash Code], [Crash Type], [Crash Mode] FROM [DimCrashType] (model 1737776)",
 "columns": ["Crash Code","Crash Type","Crash Mode"],
 "rows": [
